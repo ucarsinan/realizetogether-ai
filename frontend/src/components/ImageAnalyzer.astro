@@ -1,58 +1,127 @@
 <div class="max-w-3xl mx-auto">
-  <div 
+  <div
     id="drop-zone"
     class="border-2 border-dashed border-slate-700 rounded-2xl p-12 text-center hover:border-blue-500/50 hover:bg-slate-800/50 transition-all cursor-pointer group bg-slate-900/30"
   >
     <input type="file" id="file-input" class="hidden" accept="image/png, image/jpeg, image/webp" />
-    
+
     <div class="flex flex-col items-center gap-4">
-      <div class="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-blue-900/20 border border-slate-700">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-blue-400">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+      <div
+        class="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-blue-900/20 border border-slate-700"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="w-8 h-8 text-blue-400"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+          ></path>
         </svg>
       </div>
       <div>
-        <h3 class="text-xl font-bold text-white group-hover:text-blue-300 transition-colors">Bild hochladen</h3>
+        <h3 class="text-xl font-bold text-white group-hover:text-blue-300 transition-colors">
+          Bild hochladen
+        </h3>
         <p class="text-slate-400 mt-2 text-sm">Screenshot hier ablegen (PNG, JPG)</p>
       </div>
     </div>
   </div>
 
-  <div id="preview-container" class="hidden mt-8 text-center animate-fade-in">
+  <div
+    id="preview-connpx prettier --write "
+    **
+    *.astro"
+    "**
+    *.ts"tainer"
+    class="hidden mt-8 text-center animate-fade-in"
+  >
     <div class="relative inline-block group">
-        <img id="image-preview" class="max-h-[400px] mx-auto rounded-lg border border-slate-700 shadow-2xl" />
-        <button id="remove-btn" class="absolute -top-3 -right-3 bg-red-500 text-white rounded-full p-2 shadow-lg hover:bg-red-600 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-        </button>
+      <img
+        id="image-preview"
+        class="max-h-[400px] mx-auto rounded-lg border border-slate-700 shadow-2xl"
+      />
+      <button
+        id="remove-btn"
+        class="absolute -top-3 -right-3 bg-red-500 text-white rounded-full p-2 shadow-lg hover:bg-red-600 transition-colors"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="2"
+          stroke="currentColor"
+          class="w-4 h-4"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
     </div>
-    
+
     <div class="mt-8">
-        <button id="analyze-btn" class="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-900/20 flex items-center gap-2 mx-auto">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
-          </svg>
-          Analyse starten
-        </button>
+      <button
+        id="analyze-btn"
+        class="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-900/20 flex items-center gap-2 mx-auto"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="2"
+          stroke="currentColor"
+          class="w-5 h-5"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"
+          ></path>
+        </svg>
+        Analyse starten
+      </button>
     </div>
   </div>
 
   <div id="loading" class="hidden mt-12 text-center">
-    <div class="inline-block animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-emerald-400 mb-4 shadow-[0_0_15px_rgba(52,211,153,0.5)]"></div>
-    <p class="text-emerald-400 font-mono text-sm animate-pulse tracking-widest">VISION ENGINE PROCESSING...</p>
+    <div
+      class="inline-block animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-emerald-400 mb-4 shadow-[0_0_15px_rgba(52,211,153,0.5)]"
+    >
+    </div>
+    <p class="text-emerald-400 font-mono text-sm animate-pulse tracking-widest">
+      VISION ENGINE PROCESSING...
+    </p>
   </div>
 
-  <div id="result" class="hidden mt-12 bg-slate-900/80 backdrop-blur-sm border border-slate-700 rounded-2xl p-8 shadow-2xl animate-fade-in-up">
+  <div
+    id="result"
+    class="hidden mt-12 bg-slate-900/80 backdrop-blur-sm border border-slate-700 rounded-2xl p-8 shadow-2xl animate-fade-in-up"
+  >
     <div class="flex items-center gap-3 mb-6 border-b border-slate-800 pb-4">
-        <div class="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-emerald-400">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-        </div>
-        <h3 class="text-lg font-bold text-white">Analyse Ergebnis</h3>
+      <div
+        class="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="2"
+          stroke="currentColor"
+          class="w-4 h-4 text-emerald-400"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+      </div>
+      <h3 class="text-lg font-bold text-white">Analyse Ergebnis</h3>
     </div>
-    
+
     <div id="markdown-content" class="prose prose-invert max-w-none text-slate-300"></div>
   </div>
 </div>
@@ -62,9 +131,10 @@
   import { marked } from 'marked';
 
   // --- CONFIG: Deine Cloud URL ---
-  const API_URL = "https://8000-firebase-realizetogether-ai-1768386888249.cluster-6vyo4gb53jczovun3dxslzjahs.cloudworkstations.dev/api/vision";
+  const API_URL =
+    'https://8000-firebase-realizetogether-ai-1768386888249.cluster-6vyo4gb53jczovun3dxslzjahs.cloudworkstations.dev/api/vision';
 
-  console.log("Vision verbindet zu:", API_URL);
+  console.log('Vision verbindet zu:', API_URL);
 
   const dropZone = document.getElementById('drop-zone');
   const fileInput = document.getElementById('file-input');
@@ -79,7 +149,7 @@
   let currentFile = null;
 
   dropZone?.addEventListener('click', () => fileInput?.click());
-  
+
   dropZone?.addEventListener('dragover', (e) => {
     e.preventDefault();
     dropZone.classList.add('border-blue-500', 'bg-slate-800/80');
@@ -115,8 +185,8 @@
   // @ts-ignore
   function handleFile(file) {
     if (!file.type.startsWith('image/')) {
-        alert('Bitte lade nur Bilddateien hoch (JPG, PNG).');
-        return;
+      alert('Bitte lade nur Bilddateien hoch (JPG, PNG).');
+      return;
     }
     currentFile = file;
     const reader = new FileReader();
@@ -144,37 +214,41 @@
       const res = await fetch(API_URL, {
         method: 'POST',
         // NEU: Credentials 'include' wie beim Chatbot, da dieser funktioniert!
-        credentials: 'include', 
+        credentials: 'include',
         body: formData
       });
 
       if (!res.ok) throw new Error(`Server Error: ${res.status}`);
 
       const data = await res.json();
-      
+
       loading?.classList.add('hidden');
       result?.classList.remove('hidden');
       analyzeBtn?.classList.remove('hidden');
-      
+
       // Ergebnis parsen
       let analysisText = data.analysis;
       if (Array.isArray(analysisText)) analysisText = analysisText.join('');
-      if (!analysisText) analysisText = "⚠️ Keine Text-Antwort erhalten.";
+      if (!analysisText) analysisText = '⚠️ Keine Text-Antwort erhalten.';
 
       // @ts-ignore
       // Robustes Parsen: Falls marked fehlschlägt, zeige Text pur an
       if (markdownContent) {
-          try {
-             markdownContent.innerHTML = marked.parse(analysisText);
-          } catch (e) {
-             markdownContent.innerText = analysisText;
-          }
+        try {
+          markdownContent.innerHTML = await marked.parse(analysisText);
+        } catch (e) {
+          markdownContent.innerText = analysisText;
+        }
       }
-
     } catch (e) {
       console.error(e);
-      // @ts-ignore
-      alert(`Verbindungsfehler: ${e.message}. \n\nTipp: Prüfe, ob 'Gemini Flash' im Backend korrekt konfiguriert ist (404 Fehler).`);
+
+      const errorMessage = e instanceof Error ? e.message : String(e);
+
+      alert(
+        `Verbindungsfehler: ${errorMessage}. \n\nTipp: Prüfe, ob 'Gemini Flash' im Backend korrekt konfiguriert ist (404 Fehler).`
+      );
+      
       loading?.classList.add('hidden');
       analyzeBtn?.classList.remove('hidden');
     }
@@ -182,8 +256,22 @@
 </script>
 
 <style is:global>
-#markdown-content h1, #markdown-content h2 { color: white; font-weight: 700; margin: 1.5em 0 0.8em; }
-#markdown-content strong { color: #34d399; }
-#markdown-content ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 1em; }
-#markdown-content p { margin-bottom: 1em; line-height: 1.7; }
+  #markdown-content h1,
+  #markdown-content h2 {
+    color: white;
+    font-weight: 700;
+    margin: 1.5em 0 0.8em;
+  }
+  #markdown-content strong {
+    color: #34d399;
+  }
+  #markdown-content ul {
+    list-style-type: disc;
+    padding-left: 1.5em;
+    margin-bottom: 1em;
+  }
+  #markdown-content p {
+    margin-bottom: 1em;
+    line-height: 1.7;
+  }
 </style>

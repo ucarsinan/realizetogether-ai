@@ -4,45 +4,57 @@ import ChatWidget from '../../components/ChatWidget.astro';
 ---
 
 <Layout title="Sinan.AI - Home">
-  
- <main class="w-full min-h-[80vh] py-12 flex flex-col items-center justify-center p-4 relative overflow-hidden">
-    
-    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-900/20 via-slate-950 to-slate-950 pointer-events-none"></div>
+  <main
+    class="w-full min-h-[80vh] py-12 flex flex-col items-center justify-center p-4 relative overflow-hidden"
+  >
+    <div
+      class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-900/20 via-slate-950 to-slate-950 pointer-events-none"
+    >
+    </div>
     <div class="z-10 w-full max-w-6xl flex flex-col md:flex-row items-center gap-8 md:gap-16">
-      
       <div class="flex-1 text-center md:text-left space-y-6">
-        <div class="inline-block bg-blue-900/30 text-blue-300 px-3 py-1 rounded-full text-xs font-bold tracking-widest uppercase border border-blue-500/30">
+        <div
+          class="inline-block bg-blue-900/30 text-blue-300 px-3 py-1 rounded-full text-xs font-bold tracking-widest uppercase border border-blue-500/30"
+        >
           AI-Powered Portfolio
         </div>
-        
+
         <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-white">
-          Hi, I am <span class="bg-gradient-to-r from-blue-400 to-emerald-400 text-transparent bg-clip-text">Sinan</span>.
+          Hi, I am <span
+            class="bg-gradient-to-r from-blue-400 to-emerald-400 text-transparent bg-clip-text"
+            >Sinan</span
+          >.
         </h1>
-        
+
         <h2 class="text-2xl md:text-3xl font-bold text-slate-200 mt-2">
           Full Stack Developer & <br class="hidden md:block" /> AI Engineer
         </h2>
-        
+
         <p class="text-lg text-slate-400 leading-relaxed max-w-2xl">
-          Computer Scientist (Diplom) with 15 years of experience in software development.
-          I develop scalable systems and enhance them with intelligent AI integrations – from backend to pixel.
+          Computer Scientist (Diplom) with 15 years of experience in software development. I develop
+          scalable systems and enhance them with intelligent AI integrations – from backend to
+          pixel.
         </p>
 
         <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start pt-6">
-            <a href="/en/cv" class="px-6 py-3 bg-white text-slate-900 font-bold rounded hover:bg-slate-200 transition-colors text-center">
-                View Resume
-            </a>
-            <a href="/en/projects" class="px-6 py-3 border border-slate-700 text-white rounded hover:border-emerald-500 hover:text-emerald-400 transition-all text-center">
-                Code & Projects
-            </a>
+          <a
+            href="/en/cv"
+            class="px-6 py-3 bg-white text-slate-900 font-bold rounded hover:bg-slate-200 transition-colors text-center"
+          >
+            View Resume
+          </a>
+          <a
+            href="/en/projects"
+            class="px-6 py-3 border border-slate-700 text-white rounded hover:border-emerald-500 hover:text-emerald-400 transition-all text-center"
+          >
+            Code & Projects
+          </a>
         </div>
       </div>
 
       <div class="flex-1 w-full max-w-md h-[500px] md:h-[600px]">
         <ChatWidget />
       </div>
-
     </div>
-
   </main>
 </Layout>

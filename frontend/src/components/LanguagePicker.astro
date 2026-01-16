@@ -22,8 +22,8 @@ const slug = segments.join('/');
 const targetUrl = getRelativeLocaleUrl(targetLang, slug);
 ---
 
-<a 
-  href={targetUrl} 
+<a
+  href={targetUrl}
   class="flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-700 bg-slate-900/50 text-xs font-bold text-slate-300 hover:text-white hover:border-emerald-500 transition-all uppercase tracking-wider"
 >
   {targetLang === 'en' ? '🇺🇸 EN' : '🇩🇪 DE'}

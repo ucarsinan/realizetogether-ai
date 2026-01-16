@@ -1,13 +1,10 @@
-# Python (Backend) Müll ignorieren
 backend/venv/
 backend/__pycache__/
 *.pyc
 
-# Node.js (Frontend) Müll ignorieren
 frontend/node_modules/
 frontend/dist/
 .astro/
 
-# Sicherheits-Check (WICHTIG!)
 .env
 .DS_Store

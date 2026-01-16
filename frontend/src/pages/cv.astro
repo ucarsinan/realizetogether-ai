@@ -5,74 +5,90 @@ import TimelineItem from '../components/TimelineItem.astro';
 // Daten strikt nach cv.pdf
 const stations = [
   {
-    year: "Seit 10/2022",
-    title: "Frontend-Entwickler (Remote)",
-    company: "Ceyoniq GmbH, Bielefeld",
-    description: "Konzeption und Implementierung modularer Web Components (Lit) und Vue-Integrationen für unternehmensweite Plattformen. Aufbau und Pflege einer Storybook-Komponentenbibliothek. Etablierung einer robusten Testarchitektur mit Playwright sowie Aufbau automatisierter CI/CD-Pipelines (GitLab).",
-    tags: ["Vue.js", "Lit (Web Components)", "Storybook", "Playwright", "GitLab CI/CD", "TypeScript"]
+    year: 'Seit 10/2022',
+    title: 'Frontend-Entwickler (Remote)',
+    company: 'Ceyoniq GmbH, Bielefeld',
+    description:
+      'Konzeption und Implementierung modularer Web Components (Lit) und Vue-Integrationen für unternehmensweite Plattformen. Aufbau und Pflege einer Storybook-Komponentenbibliothek. Etablierung einer robusten Testarchitektur mit Playwright sowie Aufbau automatisierter CI/CD-Pipelines (GitLab).',
+    tags: [
+      'Vue.js',
+      'Lit (Web Components)',
+      'Storybook',
+      'Playwright',
+      'GitLab CI/CD',
+      'TypeScript'
+    ]
   },
   {
-    year: "12/2020 – 09/2022",
-    title: "Web-Entwickler (Freelancer)",
-    company: "Fil & Muz, Duisburg",
-    description: "Planung und Realisierung responsiver Landingpages, Microsites und interaktiver Rich Ads für KMU und Agenturkunden. Optimierung von Performance und Cross-Browser-Kompatibilität. Strategische Beratung hinsichtlich User Experience und Webarchitekturen.",
-    tags: ["Responsive Design", "Rich Ads", "UX Consulting", "Performance", "Microsites"]
+    year: '12/2020 – 09/2022',
+    title: 'Web-Entwickler (Freelancer)',
+    company: 'Fil & Muz, Duisburg',
+    description:
+      'Planung und Realisierung responsiver Landingpages, Microsites und interaktiver Rich Ads für KMU und Agenturkunden. Optimierung von Performance und Cross-Browser-Kompatibilität. Strategische Beratung hinsichtlich User Experience und Webarchitekturen.',
+    tags: ['Responsive Design', 'Rich Ads', 'UX Consulting', 'Performance', 'Microsites']
   },
   {
-    year: "05/2019 – 11/2020",
-    title: "Frontend-Entwickler",
-    company: "Smoox GmbH, Düsseldorf",
-    description: "Entwicklung dynamischer Werbeformate und Microsites. Einführung wiederverwendbarer Bannermodule sowie Automatisierung der Build- und Deployment-Prozesse.",
-    tags: ["Dynamic Ads", "Build Automation", "Microsites", "Frontend"]
+    year: '05/2019 – 11/2020',
+    title: 'Frontend-Entwickler',
+    company: 'Smoox GmbH, Düsseldorf',
+    description:
+      'Entwicklung dynamischer Werbeformate und Microsites. Einführung wiederverwendbarer Bannermodule sowie Automatisierung der Build- und Deployment-Prozesse.',
+    tags: ['Dynamic Ads', 'Build Automation', 'Microsites', 'Frontend']
   },
   {
-    year: "10/2014 – 12/2018",
-    title: "IT Consultant",
-    company: "ÇIĞIŞ Software Systems Ltd., Istanbul",
-    description: "Leitung von Enterprise-Webprojekten, einschließlich Anforderungsanalyse, Architekturdesign und Implementierungskoordination. Einführung agiler Methoden und Begleitung komplexer Rollouts in multinationalen Teams.",
-    tags: ["Project Management", "Agile", "Architecture Design", "Requirements Analysis"]
+    year: '10/2014 – 12/2018',
+    title: 'IT Consultant',
+    company: 'ÇIĞIŞ Software Systems Ltd., Istanbul',
+    description:
+      'Leitung von Enterprise-Webprojekten, einschließlich Anforderungsanalyse, Architekturdesign und Implementierungskoordination. Einführung agiler Methoden und Begleitung komplexer Rollouts in multinationalen Teams.',
+    tags: ['Project Management', 'Agile', 'Architecture Design', 'Requirements Analysis']
   },
   {
-    year: "06/2009 – 08/2014",
-    title: "Software-Entwickler",
-    company: "Invitec GmbH, Duisburg",
-    description: "Portierung und kontinuierliche Weiterentwicklung eines Kernprodukts in C#/.NET (Instacount®) einschließlich Performance-Tuning und Reporting mit SQL und Crystal Reports.",
-    tags: ["C#", ".NET", "SQL", "Crystal Reports", "Performance Tuning"]
+    year: '06/2009 – 08/2014',
+    title: 'Software-Entwickler',
+    company: 'Invitec GmbH, Duisburg',
+    description:
+      'Portierung und kontinuierliche Weiterentwicklung eines Kernprodukts in C#/.NET (Instacount®) einschließlich Performance-Tuning und Reporting mit SQL und Crystal Reports.',
+    tags: ['C#', '.NET', 'SQL', 'Crystal Reports', 'Performance Tuning']
   },
   {
-    year: "2000 – 2008",
-    title: "Diplom Informatik",
-    company: "Technische Universität Dortmund",
-    description: "Diplomarbeit: Konnektionistische Systeme in der natürlichen und künstlichen Intelligenz sowie in den kognitiven Neurowissenschaften – Strukturen, Lernen und Fähigkeiten.",
-    tags: ["Diplom", "Artificial Intelligence", "Neural Networks", "Cognitive Neuroscience"]
+    year: '2000 – 2008',
+    title: 'Diplom Informatik',
+    company: 'Technische Universität Dortmund',
+    description:
+      'Diplomarbeit: Konnektionistische Systeme in der natürlichen und künstlichen Intelligenz sowie in den kognitiven Neurowissenschaften – Strukturen, Lernen und Fähigkeiten.',
+    tags: ['Diplom', 'Artificial Intelligence', 'Neural Networks', 'Cognitive Neuroscience']
   }
 ];
 ---
 
 <Layout title="Sinan.AI - Lebenslauf">
   <div class="max-w-4xl mx-auto px-4 py-12 md:py-16">
-    
     <div class="text-center mb-16 space-y-4 animate-fade-in">
-      <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 via-cyan-400 to-emerald-400 text-transparent bg-clip-text pb-2">
+      <h1
+        class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 via-cyan-400 to-emerald-400 text-transparent bg-clip-text pb-2"
+      >
         Beruflicher Werdegang
       </h1>
       <p class="text-slate-400 text-lg max-w-2xl mx-auto">
-        [cite_start]Über 15 Jahre Erfahrung in der Entwicklung performanter, skalierbarer Web- und Backendlösungen[cite: 5].
+        [cite_start]Über 15 Jahre Erfahrung in der Entwicklung performanter, skalierbarer Web- und
+        Backendlösungen[cite: 5].
       </p>
     </div>
 
     <div class="relative animate-fade-in-up">
-       {stations.map((station, index) => (
-         <TimelineItem 
-           year={station.year}
-           title={station.title}
-           company={station.company}
-           description={station.description}
-           tags={station.tags}
-           isLast={index === stations.length - 1}
-         />
-       ))}
+      {
+        stations.map((station, index) => (
+          <TimelineItem
+            year={station.year}
+            title={station.title}
+            company={station.company}
+            description={station.description}
+            tags={station.tags}
+            isLast={index === stations.length - 1}
+          />
+        ))
+      }
     </div>
-
   </div>
 </Layout>

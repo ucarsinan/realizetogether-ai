@@ -6,33 +6,36 @@ import Navbar from '../components/Navbar.astro';
 import '../styles/global.css';
 
 interface Props {
-	title?: string;
+  title?: string;
 }
 
-const { title = "Sinan.AI - Interactive Resume" } = Astro.props;
+const { title = 'Sinan.AI - Interactive Resume' } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="de" class="scroll-smooth">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="description" content="Sinan Uçar - Diplom-Informatiker & Solutions Architect" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
-	</head>
-	<body class="bg-slate-950 text-white min-h-screen flex flex-col">
-        <Navbar />
-        <div class="flex-grow">
-		    <slot />
-        </div>
-		<CookieBanner />
-		<Footer />
-	</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Sinan Uçar - Diplom-Informatiker & Solutions Architect" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+  </head>
+  <body class="bg-slate-950 text-white min-h-screen flex flex-col">
+    <Navbar />
+    <div class="flex-grow">
+      <slot />
+    </div>
+    <CookieBanner />
+    <Footer />
+  </body>
 </html>
 
 <style is:global>
-	/* Globale Styles können hier bleiben */
-    html, body { font-family: 'JetBrains Mono', monospace, sans-serif; }
+  /* Globale Styles können hier bleiben */
+  html,
+  body {
+    font-family: 'JetBrains Mono', monospace, sans-serif;
+  }
 </style>
