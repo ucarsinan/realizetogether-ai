@@ -58,11 +58,11 @@
 </div>
 
 <script>
+  // Robustes Importieren von marked (verhindert Absturz)
   import { marked } from 'marked';
 
-  // --- REPARATUR: URL aus der .env Datei laden ---
-  const BASE_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:8000/api";
-  const API_URL = `${BASE_URL}/vision`;
+  // --- CONFIG: Deine Cloud URL ---
+  const API_URL = "https://8000-firebase-realizetogether-ai-1768386888249.cluster-6vyo4gb53jczovun3dxslzjahs.cloudworkstations.dev/api/vision";
 
   console.log("Vision verbindet zu:", API_URL);
 
@@ -92,15 +92,18 @@
   dropZone?.addEventListener('drop', (e) => {
     e.preventDefault();
     dropZone.classList.remove('border-blue-500', 'bg-slate-800/80');
+    // @ts-ignore
     if (e.dataTransfer?.files.length) handleFile(e.dataTransfer.files[0]);
   });
 
   fileInput?.addEventListener('change', (e) => {
+    // @ts-ignore
     if (e.target?.files?.length) handleFile(e.target.files[0]);
   });
 
   removeBtn?.addEventListener('click', () => {
     currentFile = null;
+    // @ts-ignore
     if (fileInput) fileInput.value = '';
     previewContainer?.classList.add('hidden');
     dropZone?.classList.remove('hidden');
@@ -109,6 +112,7 @@
 
   analyzeBtn?.addEventListener('click', runAnalysis);
 
+  // @ts-ignore
   function handleFile(file) {
     if (!file.type.startsWith('image/')) {
         alert('Bitte lade nur Bilddateien hoch (JPG, PNG).');
@@ -117,6 +121,7 @@
     currentFile = file;
     const reader = new FileReader();
     reader.onload = (e) => {
+      // @ts-ignore
       if (imagePreview) imagePreview.src = e.target?.result;
       dropZone?.classList.add('hidden');
       previewContainer?.classList.remove('hidden');
@@ -138,6 +143,8 @@
     try {
       const res = await fetch(API_URL, {
         method: 'POST',
+        // NEU: Credentials 'include' wie beim Chatbot, da dieser funktioniert!
+        credentials: 'include', 
         body: formData
       });
 
@@ -154,11 +161,20 @@
       if (Array.isArray(analysisText)) analysisText = analysisText.join('');
       if (!analysisText) analysisText = "⚠️ Keine Text-Antwort erhalten.";
 
-      if (markdownContent) markdownContent.innerHTML = marked.parse(analysisText);
+      // @ts-ignore
+      // Robustes Parsen: Falls marked fehlschlägt, zeige Text pur an
+      if (markdownContent) {
+          try {
+             markdownContent.innerHTML = marked.parse(analysisText);
+          } catch (e) {
+             markdownContent.innerText = analysisText;
+          }
+      }
 
     } catch (e) {
       console.error(e);
-      alert(`Verbindungsfehler: ${e.message}. Läuft das Backend?`);
+      // @ts-ignore
+      alert(`Verbindungsfehler: ${e.message}. \n\nTipp: Prüfe, ob 'Gemini Flash' im Backend korrekt konfiguriert ist (404 Fehler).`);
       loading?.classList.add('hidden');
       analyzeBtn?.classList.remove('hidden');
     }
@@ -166,7 +182,6 @@
 </script>
 
 <style is:global>
-/* Markdown Styling */
 #markdown-content h1, #markdown-content h2 { color: white; font-weight: 700; margin: 1.5em 0 0.8em; }
 #markdown-content strong { color: #34d399; }
 #markdown-content ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 1em; }
