@@ -1,14 +1,28 @@
 ---
+import LanguagePicker from './LanguagePicker.astro';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+const lang = Astro.currentLocale || 'de';
+
+// Texte basierend auf Sprache
+const t = {
+  home: lang === 'de' ? 'Home' : 'Home',
+  about: lang === 'de' ? 'Profil' : 'Profile',
+  cv: lang === 'de' ? 'Lebenslauf' : 'Resume',
+  projects: lang === 'de' ? 'Projekte' : 'Projects',
+  demo: lang === 'de' ? 'AI Vision Demo' : 'AI Vision Demo',
+  contact: lang === 'de' ? 'Kontakt' : 'Contact',
+};
+
 const links = [
-  { name: 'Home', href: '/' },
-  { name: 'Profil', href: '/about' },
-  { name: 'Lebenslauf', href: '/cv' },
-  { name: 'Projekte', href: '/projects' },
-  { name: 'AI Vision Demo', href: '/demos/vision' },
-  { name: 'Kontakt', href: '/contact' },
+  { name: t.home, href: getRelativeLocaleUrl(lang, '/') },
+  { name: t.about, href: getRelativeLocaleUrl(lang, 'about') },
+  { name: t.cv, href: getRelativeLocaleUrl(lang, 'cv') },
+  { name: t.projects, href: getRelativeLocaleUrl(lang, 'projects') },
+  { name: t.demo, href: getRelativeLocaleUrl(lang, 'demos/vision') },
+  { name: t.contact, href: getRelativeLocaleUrl(lang, 'contact') },
 ];
 
-// Wir prüfen, auf welcher Seite wir gerade sind, um den Link aktiv zu markieren
 const currentPath = Astro.url.pathname;
 ---
 
@@ -17,13 +31,13 @@ const currentPath = Astro.url.pathname;
     <div class="flex items-center justify-between h-16">
       
       <div class="flex-shrink-0">
-        <a href="/" class="font-mono text-2xl font-bold bg-gradient-to-r from-blue-400 to-emerald-400 text-transparent bg-clip-text hover:opacity-80 transition-opacity">
+        <a href={getRelativeLocaleUrl(lang, '/')} class="font-mono text-2xl font-bold bg-gradient-to-r from-blue-400 to-emerald-400 text-transparent bg-clip-text hover:opacity-80 transition-opacity">
           Sinan.AI
         </a>
       </div>
 
-      <div class="hidden md:block">
-        <div class="ml-10 flex items-baseline space-x-4">
+      <div class="hidden md:flex items-center gap-6">
+        <div class="flex items-baseline space-x-4">
           {links.map((link) => (
             <a 
               href={link.href} 
@@ -38,15 +52,16 @@ const currentPath = Astro.url.pathname;
             </a>
           ))}
         </div>
+        <LanguagePicker />
       </div>
 
-      <div class="-mr-2 flex md:hidden">
-        <button id="mobile-menu-btn" type="button" class="inline-flex items-center justify-center p-2 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-white">
+      <div class="-mr-2 flex md:hidden gap-4 items-center">
+        <LanguagePicker /> <button id="mobile-menu-btn" type="button" class="inline-flex items-center justify-center p-2 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 focus:outline-none">
           <span class="sr-only">Open main menu</span>
-          <svg id="icon-menu" class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <svg id="icon-menu" class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
-          <svg id="icon-close" class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <svg id="icon-close" class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
@@ -74,7 +89,6 @@ const currentPath = Astro.url.pathname;
 </nav>
 
 <script>
-  // Mobile Menu Toggle Logic
   const btn = document.getElementById('mobile-menu-btn');
   const menu = document.getElementById('mobile-menu');
   const iconMenu = document.getElementById('icon-menu');
@@ -82,7 +96,6 @@ const currentPath = Astro.url.pathname;
 
   btn?.addEventListener('click', () => {
     const isHidden = menu?.classList.contains('hidden');
-    
     if (isHidden) {
       menu?.classList.remove('hidden');
       iconMenu?.classList.add('hidden');

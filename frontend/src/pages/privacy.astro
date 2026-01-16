@@ -1,0 +1,83 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Datenschutzerklärung">
+  <head slot="head">
+    <meta name="robots" content="noindex, nofollow" />
+  </head>
+
+  <div class="min-h-[80vh] flex justify-center p-4 md:p-12">
+    <div class="max-w-4xl w-full space-y-8 animate-fade-in text-slate-300">
+      
+      <div class="border-b border-slate-800 pb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-white mb-4">Datenschutzerklärung</h1>
+        <p class="text-slate-400">
+          Transparenz ist mir wichtig. Hier erkläre ich, wie diese Portfolio-Seite Daten verarbeitet – insbesondere im Hinblick auf die integrierten KI-Funktionen.
+        </p>
+      </div>
+
+      <section class="space-y-4">
+        <h2 class="text-xl font-bold text-emerald-400">1. Verantwortlicher</h2>
+        <p>Verantwortlich für die Datenverarbeitung auf dieser Website ist:</p>
+        <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-800">
+          <p class="font-bold text-white">Sinan Uçar</p>
+          <p>Musterstraße 123</p>
+          <p>12345 Musterstadt</p>
+          <p class="mt-2 text-blue-400">E-Mail: njfns@jds.com</p>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-xl font-bold text-white">2. Hosting & Logfiles</h2>
+        <p>
+          Diese Website wird bei externen Dienstleistern gehostet (Vercel Inc. und Render).
+          Um die Seite sicher und stabil auszuliefern, erfassen die Server der Hoster automatisch Informationen in sogenannten Server-Log-Dateien (IP-Adresse, Browser, Uhrzeit). 
+          Dies erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der sicheren Bereitstellung).
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <div class="bg-blue-900/10 border border-blue-500/20 p-6 rounded-2xl">
+          <h2 class="text-xl font-bold text-blue-400 mb-2">3. Nutzung der Google Gemini API (KI)</h2>
+          <p class="mb-4">
+            Diese Website bietet interaktive Funktionen (Chatbot, Bildanalyse), die durch Künstliche Intelligenz unterstützt werden.
+          </p>
+          <ul class="list-disc pl-5 space-y-2 text-sm">
+            <li>
+              <strong>Datenübertragung:</strong> Wenn Sie eine Nachricht in den Chat eingeben oder ein Bild zur Analyse hochladen, werden diese Eingaben an die API von Google (Google Cloud / Vertex AI / Gemini) gesendet, um eine Antwort zu generieren.
+            </li>
+            <li>
+              <strong>Verarbeitung in den USA:</strong> Google kann Daten in den USA verarbeiten. Google ist unter dem "EU-US Data Privacy Framework" zertifiziert, was ein angemessenes Datenschutzniveau garantiert.
+            </li>
+            <li>
+              <strong>Keine Speicherung durch mich:</strong> Ich speichere Ihre Chat-Verläufe oder hochgeladenen Bilder nicht permanent auf meinen Servern. Die Darstellung erfolgt flüchtig in Ihrem Browser (Local Storage).
+            </li>
+            <li>
+              <strong>Hinweis:</strong> Bitte geben Sie keine sensiblen persönlichen Daten (Gesundheitsdaten, Passwörter, Klarnamen Dritter) in den Chat ein.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-xl font-bold text-white">4. Kontaktaufnahme</h2>
+        <p>
+          Wenn Sie mir per E-Mail oder über LinkedIn schreiben, werden Ihre Angaben zwecks Bearbeitung der Anfrage bei mir gespeichert. Diese Daten gebe ich nicht ohne Ihre Einwilligung weiter.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-xl font-bold text-white">5. Ihre Rechte</h2>
+        <p>
+          Sie haben jederzeit das Recht auf unentgeltliche Auskunft über Ihre gespeicherten personenbezogenen Daten, deren Herkunft und Empfänger und den Zweck der Datenverarbeitung sowie ein Recht auf Berichtigung oder Löschung dieser Daten.
+        </p>
+      </section>
+
+      <div class="pt-8 border-t border-slate-800">
+        <a href="/" class="text-slate-500 hover:text-white transition-colors">← Zurück zur Startseite</a>
+      </div>
+
+    </div>
+  </div>
+</Layout>

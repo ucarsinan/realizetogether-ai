@@ -1,5 +1,7 @@
 ---
 // Importiere die neue Komponente
+import CookieBanner from '../components/CookieBanner.astro';
+import Footer from '../components/Footer.astro';
 import Navbar from '../components/Navbar.astro';
 import '../styles/global.css';
 
@@ -21,13 +23,12 @@ const { title = "Sinan.AI - Interactive Resume" } = Astro.props;
 		<title>{title}</title>
 	</head>
 	<body class="bg-slate-950 text-white min-h-screen flex flex-col">
-		
         <Navbar />
-
         <div class="flex-grow">
 		    <slot />
         </div>
-
+		<CookieBanner />
+		<Footer />
 	</body>
 </html>
 

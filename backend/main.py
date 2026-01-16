@@ -16,7 +16,7 @@ app = FastAPI()
 # 2. Sicherheit (CORS für IDX)
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex="https://.*\.cloudworkstations\.dev",
+    allow_origins=["*"],  # <--- WICHTIG: Sternchen erlaubt Zugriff von überall
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -52,7 +52,7 @@ load_cv()
 # 4. AI Setup
 api_key = os.getenv("GOOGLE_API_KEY")
 
-# Modell für den Chat (Schnell & Effizient)
+# Modell für den Chat (Dein funktionierendes Modell)
 chat_llm = ChatGoogleGenerativeAI(
     model="gemini-flash-lite-latest",
     google_api_key=api_key,
@@ -60,7 +60,7 @@ chat_llm = ChatGoogleGenerativeAI(
     request_timeout=10.0
 )
 
-# NEU: Modell für Vision (Muss Multimodalität unterstützen, daher Flash Standard)
+# Modell für Vision (Dein funktionierendes Modell)
 vision_llm = ChatGoogleGenerativeAI(
     model="gemini-flash-latest",
     google_api_key=api_key,
@@ -68,31 +68,54 @@ vision_llm = ChatGoogleGenerativeAI(
     request_timeout=20.0 
 )
 
-# 5. Der Prompt für den Chat
-prompt_template = ChatPromptTemplate.from_template("""
-Du bist der professionelle AI-Assistent von Sinan. 
-Nutze den folgenden Lebenslauf, um Fragen zu beantworten:
-
-LEBENSLAUF DATEN:
-{cv_text}
-
-REGELN:
-- Antworte kurz, professionell und hilfreich.
-- Wenn die Info nicht im Lebenslauf steht, sag ehrlich, dass du es nicht weißt.
-- Du sprichst als Assistent ("Sinan hat...", "Er hat...").
-
-FRAGE DES USERS: 
-{user_message}
-""")
-
+# --- ÄNDERUNG 1: Sprach-Feld hinzugefügt ---
 class ChatRequest(BaseModel):
     message: str
+    language: str = "de"  # Standard ist Deutsch
 
 # 6. Endpunkt: CHAT
 @app.post("/api/chat")
 async def chat_endpoint(request: ChatRequest):
-    print(f"📩 Frage: {request.message}")
+    print(f"📩 Frage: {request.message} | Sprache: {request.language}")
     
+    # --- ÄNDERUNG 2: Prompt auswählen basierend auf Sprache ---
+    if request.language == "en":
+        # Englischer Prompt
+        prompt_template = ChatPromptTemplate.from_template("""
+        You are the professional AI assistant for Sinan. 
+        Use the following resume to answer questions:
+
+        RESUME DATA:
+        {cv_text}
+
+        RULES:
+        - Answer in ENGLISH.
+        - Keep it short, professional, and helpful.
+        - If the info is not in the resume, say honestly that you don't know.
+        - Speak as an assistant ("Sinan has...", "He has...").
+
+        USER QUESTION: 
+        {user_message}
+        """)
+    else:
+        # Deutscher Prompt (Dein Original)
+        prompt_template = ChatPromptTemplate.from_template("""
+        Du bist der professionelle AI-Assistent von Sinan. 
+        Nutze den folgenden Lebenslauf, um Fragen zu beantworten:
+
+        LEBENSLAUF DATEN:
+        {cv_text}
+
+        REGELN:
+        - Antworte kurz, professionell und hilfreich.
+        - Wenn die Info nicht im Lebenslauf steht, sag ehrlich, dass du es nicht weißt.
+        - Du sprichst als Assistent ("Sinan hat...", "Er hat...").
+
+        FRAGE DES USERS: 
+        {user_message}
+        """)
+
+    # Kette bilden mit dem gewählten Prompt
     chain = prompt_template | chat_llm
     
     try:
@@ -148,3 +171,7 @@ Erstelle eine Analyse im Markdown-Format:
         if "429" in error_str or "resource_exhausted" in error_str:
              return {"analysis": "⚠️ **Rate Limit erreicht.** Google's Vision AI braucht eine kurze Pause. Bitte warte ca. 60 Sekunden."}
         return {"analysis": f"Fehler bei der Bildanalyse: {str(e)}"}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

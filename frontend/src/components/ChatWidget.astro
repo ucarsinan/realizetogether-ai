@@ -1,7 +1,22 @@
 ---
-// src/components/ChatWidget.astro
+// 1. Sprache server-seitig ermitteln
+const lang = Astro.currentLocale || 'de';
+
+// 2. Texte basierend auf Sprache wählen
+const initialMessage = lang === 'de' 
+  ? "Hallo! Ich kenne Sinans Lebenslauf im Detail. Frag mich nach Skills, Projekten oder Erfahrung."
+  : "Hello! I know Sinan's resume in detail. Ask me about his skills, projects, or experience.";
+
+const placeholderText = lang === 'de' 
+  ? "Frage eingeben..." 
+  : "Ask a question...";
 ---
-<div id="chat-wrapper" class="w-full h-full flex flex-col bg-slate-900/80 backdrop-blur-md md:border md:border-slate-700/50 md:rounded-2xl shadow-2xl overflow-hidden relative transition-all duration-300">
+
+<div 
+  id="chat-wrapper" 
+  data-lang={lang}
+  class="w-full h-full flex flex-col bg-slate-900/80 backdrop-blur-md md:border md:border-slate-700/50 md:rounded-2xl shadow-2xl overflow-hidden relative transition-all duration-300"
+>
   <div class="flex-none bg-gradient-to-b from-slate-900/90 to-transparent p-4 z-10 border-b border-slate-800/50">
       <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
@@ -21,7 +36,7 @@
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
               <span class="text-[10px] font-bold tracking-wider text-emerald-400">AI CORE</span>
           </div>
-          Hallo! Ich kenne Sinans Lebenslauf im Detail. Frag mich nach Skills, Projekten oder Erfahrung.
+          {initialMessage}
       </div>
   </div>
 
@@ -30,7 +45,7 @@
           <input 
               type="text" 
               id="user-input" 
-              placeholder="Frage eingeben..." 
+              placeholder={placeholderText} 
               class="w-full bg-transparent text-white px-4 py-3 text-sm focus:outline-none placeholder-slate-600 font-mono"
           />
           <button 
@@ -54,12 +69,13 @@
   const statusText = document.getElementById('status-text');
   const statusDot = document.getElementById('status-dot');
   const statusPing = document.getElementById('status-ping');
+  const chatWrapper = document.getElementById('chat-wrapper'); // Wrapper holen
 
+  // DEINE FUNKTIONIERENDE URL (NICHT ÄNDERN!)
   const API_URL = "https://8000-firebase-realizetogether-ai-1768386888249.cluster-6vyo4gb53jczovun3dxslzjahs.cloudworkstations.dev/api/chat";
 
-  function setStatus(state: string) {
+  function setStatus(state) {
       if(!statusText || !statusDot || !statusPing) return;
-      
       if(state === 'processing') {
           statusText.innerText = "PROCESSING...";
           statusText.className = "text-[10px] font-bold tracking-widest text-yellow-400 uppercase";
@@ -80,20 +96,16 @@
       }
   }
 
-  function appendMessage(text: string | any[] | null, sender: string) {
+  function appendMessage(text, sender) {
       if (!chatContainer) return;
       const div = document.createElement('div');
       const isUser = sender === 'user';
-      
       div.className = isUser 
           ? "self-end max-w-[85%] bg-blue-600/10 border border-blue-500/30 text-blue-100 px-4 py-3 rounded-2xl rounded-tr-none text-sm shadow-md animate-fade-in"
           : "self-start max-w-[85%] bg-slate-800 border border-slate-700 text-slate-200 px-4 py-3 rounded-2xl rounded-tl-none text-sm shadow-md animate-fade-in";
-
       const label = isUser 
           ? `<div class="flex items-center justify-end gap-2 mb-1 opacity-70"><span class="text-[10px] font-bold tracking-wider text-blue-400">YOU</span><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span></div>` 
           : `<div class="flex items-center gap-2 mb-1 opacity-70"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span><span class="text-[10px] font-bold tracking-wider text-emerald-400">AI CORE</span></div>`;
-
-      // 1. Text bereinigen (wie vorher)
       let safeText = text;
       if (typeof text === 'object' && text !== null) {
           if (Array.isArray(text)) {
@@ -103,28 +115,17 @@
           }
       }
       if (!safeText) safeText = "Keine Antwort erhalten.";
-
-      // 2. Markdown parsen! (Nur für AI, User Text bleibt Plain)
       let contentHtml = safeText;
       if (!isUser) {
           // @ts-ignore
           contentHtml = marked.parse(safeText);
       }
-
-      // 3. HTML einfügen
-      // Wir fügen eine Klasse 'prose' hinzu, damit Listen und Fettgedrucktes gut aussehen
-      div.innerHTML = `
-        ${label}
-        <div class="leading-relaxed markdown-content ${isUser ? '' : 'text-slate-300'}">
-            ${contentHtml}
-        </div>
-      `;
-
+      div.innerHTML = `${label}<div class="leading-relaxed markdown-content ${isUser ? '' : 'text-slate-300'}">${contentHtml}</div>`;
       chatContainer.appendChild(div);
       chatContainer.scrollTop = chatContainer.scrollHeight;
   }
 
-async function sendMessage() {
+  async function sendMessage() {
       // @ts-ignore
       if (!input || !input.value.trim()) return;
       // @ts-ignore
@@ -132,6 +133,9 @@ async function sendMessage() {
       // @ts-ignore
       input.value = "";
       
+      // 5. Sprache auslesen
+      const currentLang = chatWrapper?.getAttribute('data-lang') || 'de';
+
       appendMessage(msg, 'user');
       setStatus('processing');
 
@@ -139,32 +143,29 @@ async function sendMessage() {
           const res = await fetch(API_URL, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              credentials: 'include',
-              body: JSON.stringify({ message: msg })
+              credentials: 'include', // Das hier war wichtig, lassen wir drin!
+              body: JSON.stringify({ 
+                  message: msg,
+                  language: currentLang // 6. Sprache mitsenden
+              })
           });
 
-          // --- NEU: Spezielle Behandlung für Rate Limits (429) ---
           if (res.status === 429) {
-              appendMessage("⚠️ Ich denke gerade sehr intensiv nach (Google Rate Limit). Bitte warte 10-20 Sekunden, bevor du die nächste Frage stellst.", 'ai');
+              appendMessage("⚠️ Ich denke gerade sehr intensiv nach (Rate Limit).", 'ai');
               setStatus('error');
-              return; // Abbruch
+              return;
           }
-
           if (!res.ok) {
               const errorData = await res.json().catch(() => ({}));
               throw new Error(errorData.detail ? JSON.stringify(errorData.detail) : `Server Fehler (${res.status})`);
           }
-
           const data = await res.json();
-          
           if (data && data.reply) {
               appendMessage(data.reply, 'ai');
           } else {
               appendMessage("Fehler: Leere Antwort.", 'ai');
           }
-          
           setStatus('online');
-
       } catch (e) {
           // @ts-ignore
           appendMessage(`Systemfehler: ${e.message}`, 'ai');
@@ -180,23 +181,9 @@ async function sendMessage() {
 </script>
 
 <style is:global>
-  .markdown-content strong {
-    font-weight: 700;
-    color: #34d399; /* Emerald-400 für Fettgedrucktes */
-  }
-  .markdown-content ul {
-    list-style-type: disc;
-    padding-left: 1.5em;
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
-  }
-  .markdown-content li {
-    margin-bottom: 0.25em;
-  }
-  .markdown-content p {
-    margin-bottom: 0.75em;
-  }
-  .markdown-content p:last-child {
-    margin-bottom: 0;
-  }
+  .markdown-content strong { font-weight: 700; color: #34d399; }
+  .markdown-content ul { list-style-type: disc; padding-left: 1.5em; margin-top: 0.5em; margin-bottom: 0.5em; }
+  .markdown-content li { margin-bottom: 0.25em; }
+  .markdown-content p { margin-bottom: 0.75em; }
+  .markdown-content p:last-child { margin-bottom: 0; }
 </style>
