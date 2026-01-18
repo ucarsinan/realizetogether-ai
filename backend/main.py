@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -13,14 +13,30 @@ import base64
 load_dotenv()
 app = FastAPI()
 
-origin_regex = r"https://(.*\.)?realizetogether\.com|http://localhost:\d+"
+# DEBUG: Zeigt uns, wer anklopft!
+@app.middleware("http")
+async def log_origin(request: Request, call_next):
+    origin = request.headers.get("origin")
+    print(f"🔔 Eingehender Request von Origin: {origin}")
+    response = await call_next(request)
+    return response
+
+# 2. CORS - Die "Nummer Sicher" Liste
+origins = [
+    "http://localhost:4321",
+    "http://localhost:3000",
+    "https://sinan.realizetogether.com",  # Deine Subdomain (WICHTIG!)
+    "https://www.sinan.realizetogether.com",
+    "https://realizetogether.com",
+    "https://www.realizetogether.com"
+]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=origin_regex, # Regex statt statischer Liste
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=origins,     # Hier wieder die explizite Liste
+    allow_credentials=True,    # Wichtig für Cookies/Auth
+    allow_methods=["*"],       # Erlaubt alle Methoden (GET, POST, OPTIONS)
+    allow_headers=["*"],       # Erlaubt alle Header
 )
 
 # 3. Globale Variable für das "Gehirn" (Lebenslauf)
