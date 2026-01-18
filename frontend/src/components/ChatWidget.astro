@@ -171,10 +171,9 @@ const placeholderText = lang === 'de' ? 'Frage eingeben...' : 'Ask a question...
       const res = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include', // Das hier war wichtig, lassen wir drin!
         body: JSON.stringify({
           message: msg,
-          language: currentLang // 6. Sprache mitsenden
+          language: currentLang
         })
       });
 

@@ -21,14 +21,15 @@ async def log_origin(request: Request, call_next):
     response = await call_next(request)
     return response
 
-# 2. CORS - Die "Nummer Sicher" Liste
+# 2. CORS
 origins = [
     "http://localhost:4321",
     "http://localhost:3000",
-    "https://sinan.realizetogether.com",  # Deine Subdomain (WICHTIG!)
+    "https://sinan.realizetogether.com",
     "https://www.sinan.realizetogether.com",
     "https://realizetogether.com",
-    "https://www.realizetogether.com"
+    "https://www.realizetogether.com",
+    "https://sinan-backend.onrender.com",
 ]
 
 app.add_middleware(
