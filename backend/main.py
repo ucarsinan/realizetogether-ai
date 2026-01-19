@@ -2,7 +2,6 @@ from fastapi import FastAPI, File, UploadFile, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_community.document_loaders import PyPDFLoader 
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages import HumanMessage
 from dotenv import load_dotenv
@@ -13,7 +12,7 @@ import base64
 load_dotenv()
 app = FastAPI()
 
-# DEBUG: Zeigt uns, wer anklopft!
+# DEBUG: Zeigt uns im Render-Log, wer anfragt
 @app.middleware("http")
 async def log_origin(request: Request, call_next):
     origin = request.headers.get("origin")
@@ -21,7 +20,7 @@ async def log_origin(request: Request, call_next):
     response = await call_next(request)
     return response
 
-# 2. CORS
+# 2. CORS - Konfiguration
 origins = [
     "http://localhost:4321",
     "http://localhost:3000",
@@ -29,24 +28,25 @@ origins = [
     "https://www.sinan.realizetogether.com",
     "https://realizetogether.com",
     "https://www.realizetogether.com",
-    "https://sinan-backend.onrender.com",
+    # WICHTIG: Das ist dein echter Backend-Name aus dem Screenshot!
+    "https://realizetogether-ai.onrender.com", 
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,     # Hier wieder die explizite Liste
-    allow_credentials=True,    # Wichtig für Cookies/Auth
-    allow_methods=["*"],       # Erlaubt alle Methoden (GET, POST, OPTIONS)
-    allow_headers=["*"],       # Erlaubt alle Header
+    allow_origins=origins,     
+    allow_credentials=True,    
+    allow_methods=["*"],       
+    allow_headers=["*"],       
 )
 
-# 3. Globale Variable für das "Gehirn" (Lebenslauf)
+# 3. Globale Variable initialisieren (Wichtig: Nicht auskommentieren!)
 CV_CONTEXT = ""
 
 def load_cv():
-    """Liest das PDF aus dem data-Ordner ein."""
+    """Liest die Markdown-Datei aus dem data-Ordner ein."""
     global CV_CONTEXT
-    file_path = os.path.join("data", "cv.pdf")
+    file_path = os.path.join("data", "cv.md")
 
     try:
         if not os.path.exists(file_path):
@@ -55,13 +55,15 @@ def load_cv():
             return
 
         print(f"📂 Lade Lebenslauf von: {file_path} ...")
-        loader = PyPDFLoader(file_path)
-        pages = loader.load()
-        CV_CONTEXT = "\n".join([p.page_content for p in pages])
+        
+        # Markdown als Text lesen (UTF-8 wichtig für Umlaute)
+        with open(file_path, "r", encoding="utf-8") as f:
+            CV_CONTEXT = f.read()
+            
         print(f"✅ Lebenslauf geladen! ({len(CV_CONTEXT)} Zeichen)")
         
     except Exception as e:
-        print(f"❌ Fehler beim Laden des PDFs: {e}")
+        print(f"❌ Fehler beim Laden der Datei: {e}")
         CV_CONTEXT = "Fehler beim Laden des Lebenslaufs."
 
 # Beim Starten einmal ausführen
@@ -70,33 +72,32 @@ load_cv()
 # 4. AI Setup
 api_key = os.getenv("GOOGLE_API_KEY")
 
-# Modell für den Chat (Dein funktionierendes Modell)
+# Modell für den Chat
 chat_llm = ChatGoogleGenerativeAI(
-    model="gemini-flash-lite-latest",
+    model="gemini-flash-lite-latest", # Oder "gemini-1.5-flash" falls lite zickt
     google_api_key=api_key,
     max_retries=0,       
     request_timeout=10.0
 )
 
-# Modell für Vision (Dein funktionierendes Modell)
+# Modell für Vision
 vision_llm = ChatGoogleGenerativeAI(
-    model="gemini-flash-latest",
+    model="gemini-flash-latest", # Oder "gemini-1.5-flash"
     google_api_key=api_key,
     max_retries=0,
     request_timeout=20.0 
 )
 
-# --- ÄNDERUNG 1: Sprach-Feld hinzugefügt ---
+# 5. Datenmodelle
 class ChatRequest(BaseModel):
     message: str
-    language: str = "de"  # Standard ist Deutsch
+    language: str = "de"
 
 # 6. Endpunkt: CHAT
 @app.post("/api/chat")
 async def chat_endpoint(request: ChatRequest):
     print(f"📩 Frage: {request.message} | Sprache: {request.language}")
     
-    # --- ÄNDERUNG 2: Prompt auswählen basierend auf Sprache ---
     if request.language == "en":
         # Englischer Prompt
         prompt_template = ChatPromptTemplate.from_template("""
@@ -116,7 +117,7 @@ async def chat_endpoint(request: ChatRequest):
         {user_message}
         """)
     else:
-        # Deutscher Prompt (Dein Original)
+        # Deutscher Prompt
         prompt_template = ChatPromptTemplate.from_template("""
         Du bist der professionelle AI-Assistent von Sinan. 
         Nutze den folgenden Lebenslauf, um Fragen zu beantworten:
@@ -133,7 +134,6 @@ async def chat_endpoint(request: ChatRequest):
         {user_message}
         """)
 
-    # Kette bilden mit dem gewählten Prompt
     chain = prompt_template | chat_llm
     
     try:
@@ -147,22 +147,20 @@ async def chat_endpoint(request: ChatRequest):
         error_str = str(e).lower()
         print(f"❌ Fehler: {error_str}") 
         
-        if "429" in error_str or "resource_exhausted" in error_str or "timeout" in error_str or "deadline" in error_str:
-            return {"reply": "⚠️ **Kurze Pause!**\nIch habe gerade zu viele Anfragen erhalten oder Google antwortet zu langsam. Bitte warte 30 Sekunden. ⏳"}
+        if "429" in error_str or "resource_exhausted" in error_str or "timeout" in error_str:
+            return {"reply": "⚠️ **Kurze Pause!** Ich habe gerade zu viele Anfragen erhalten. Bitte warte 30 Sekunden. ⏳"}
         
         return {"reply": f"Ein technisches Problem ist aufgetreten: {str(e)}"}
 
-# 7. Endpunkt: VISION (Bilderanalyse)
+# 7. Endpunkt: VISION
 @app.post("/api/vision")
 async def vision_endpoint(file: UploadFile = File(...)):
     print(f"🖼️ Bild empfangen: {file.filename}")
     
     try:
-        # 1. Bild einlesen und kodieren
         contents = await file.read()
         image_b64 = base64.b64encode(contents).decode("utf-8")
         
-        # 2. Multimodaler Prompt
         message = HumanMessage(
             content=[
                 {"type": "text", "text": """
@@ -179,7 +177,6 @@ Erstelle eine Analyse im Markdown-Format:
             ]
         )
         
-        # 3. Anfrage an Vision Model
         response = vision_llm.invoke([message])
         return {"analysis": response.content}
 
@@ -187,7 +184,7 @@ Erstelle eine Analyse im Markdown-Format:
         print(f"❌ Vision Fehler: {e}")
         error_str = str(e).lower()
         if "429" in error_str or "resource_exhausted" in error_str:
-             return {"analysis": "⚠️ **Rate Limit erreicht.** Google's Vision AI braucht eine kurze Pause. Bitte warte ca. 60 Sekunden."}
+             return {"analysis": "⚠️ **Rate Limit erreicht.** Google's Vision AI braucht eine kurze Pause."}
         return {"analysis": f"Fehler bei der Bildanalyse: {str(e)}"}
 
 if __name__ == "__main__":
