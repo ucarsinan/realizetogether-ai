@@ -113,17 +113,10 @@ class AnalyzeRequest(BaseModel):
     text: str
 
 # Modell für Sentiment-Analyse OUTPUT
-# Jetzt erben wir einfach von BaseModel (Standard)
 class SentimentAnalysis(BaseModel):
-    score: float = Field(
-        description="Ein Wert zwischen -1.0 (sehr negativ) und 1.0 (sehr positiv)."
-    )
-    emotion: Literal['freude', 'wut', 'trauer', 'neutral', 'angst'] = Field(
-        description="Die primäre Emotion, die im Text erkannt wurde."
-    )
-    suggestion: str = Field(
-        description="Ein kurzer, höflicher Tipp an den Verfasser, wie er den Text professioneller formulieren könnte (max. 1 Satz)."
-    )
+    score: float = Field(description="Score zwischen -1.0 und 1.0")
+    emotion: Literal['freude', 'wut', 'trauer', 'neutral', 'angst'] = Field(description="Primäre Emotion")
+    suggestion: str = Field(description="Ein kurzer Tipp zur Verbesserung")
 
 # ==========================================
 # 5. ENDPUNKTE (API Routes)
@@ -180,64 +173,62 @@ async def chat_endpoint(request: ChatRequest):
     except Exception as e:
         error_str = str(e).lower()
         print(f"❌ Fehler: {error_str}") 
-        
-        if "429" in error_str or "resource_exhausted" in error_str or "timeout" in error_str:
-            return {"reply": "⚠️ **Kurze Pause!** Ich habe gerade zu viele Anfragen erhalten. Bitte warte 30 Sekunden. ⏳"}
-        
-        return {"reply": f"Ein technisches Problem ist aufgetreten: {str(e)}"}
+        if "429" in error_str or "resource_exhausted" in error_str:
+            return {"reply": "⚠️ **Kurze Pause!** Zu viele Anfragen. Bitte warte kurz."}
+        return {"reply": f"Technischer Fehler: {str(e)}"}
 
 # --- VISION ---
 @app.post("/api/vision")
 async def vision_endpoint(file: UploadFile = File(...)):
     print(f"🖼️ Bild empfangen: {file.filename}")
-    
     try:
         contents = await file.read()
         image_b64 = base64.b64encode(contents).decode("utf-8")
         
         message = HumanMessage(
             content=[
-                {"type": "text", "text": """
-Du bist ein Senior UX/UI Designer und Frontend-Experte. Analysiere diesen Screenshot. 
-
-Erstelle eine Analyse im Markdown-Format:
-1. **Erster Eindruck:** Was fällt sofort auf? (Positiv/Negativ)
-2. **UX & Usability:** Sind Buttons erkennbar? Ist die Navigation logisch?
-3. **Design & Ästhetik:** Farbwahl, Whitespace, Typografie.
-4. **Verbesserungsvorschläge:** 3 konkrete Punkte für bessere Conversion oder User Experience.
-5. **Bonus Code:** Gib mir einen kurzen Tailwind-CSS Code-Schnipsel, um das wichtigste Element (z.B. CTA Button) zu verbessern.
-                """},
+                {"type": "text", "text": "Analysiere diesen Screenshot (UX/UI, Design, Code). Antworte in Markdown."},
                 {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{image_b64}"}}
             ]
         )
-        
         response = vision_llm.invoke([message])
         
-        # --- FIX: LISTE ZU STRING KONVERTIEREN ---
-        # Manchmal gibt Gemini eine Liste von Textblöcken zurück.
-        # Wir kleben sie hier sicherheitshalber zusammen.
         analysis_text = response.content
         if isinstance(analysis_text, list):
-            print("⚠️ Antwort war eine Liste, wird zusammengefügt...")
             analysis_text = "".join([str(item) for item in analysis_text])
             
         return {"analysis": analysis_text}
 
     except Exception as e:
         print(f"❌ Vision Fehler: {e}")
-        error_str = str(e).lower()
-        if "429" in error_str or "resource_exhausted" in error_str:
-             return {"analysis": "⚠️ **Rate Limit erreicht.** Google's Vision AI braucht eine kurze Pause."}
         return {"analysis": f"Fehler bei der Bildanalyse: {str(e)}"}
+
+# --- SENTIMENT / ANALYZE (DER FEHLENDE ENDPUNKT) ---
+@app.post("/api/analyze")
+async def analyze_sentiment(request: AnalyzeRequest):
+    print(f"📊 Sentiment Analyse für: {request.text[:50]}...")
+    
+    structured_llm = chat_llm.with_structured_output(SentimentAnalysis)
+    
+    prompt = ChatPromptTemplate.from_messages([
+        ("system", "Du bist ein Experte für Sentiment-Analyse. Analysiere den Text und gib JSON zurück."),
+        ("human", "Text: {text}")
+    ])
+    
+    chain = prompt | structured_llm
+
+    try:
+        result = chain.invoke({"text": request.text})
+        return result
+    except Exception as e:
+        print(f"❌ Analyse Fehler: {e}")
+        return {"error": str(e)}
 
 # Optional: Root-Endpunkt für Health-Checks
 @app.get("/")
 async def root():
     return {"status": "Server läuft! 🚀", "endpoints": ["/api/chat", "/api/vision", "/api/analyze"]}
     
-# ==========================================
-# 6. STARTUP
-# ==========================================
 if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 8000))
