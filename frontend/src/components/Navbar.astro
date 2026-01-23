@@ -4,19 +4,18 @@ import { getRelativeLocaleUrl } from 'astro:i18n';
 
 const lang = Astro.currentLocale || 'de';
 
-// Mapping: Welche Seite heißt wie in welcher Sprache?
-// Das brauchen wir, um die korrekten Links zu bauen.
+// ROUTING LOGIK: Hier definieren wir die Pärchen
 const routes = {
   home: { de: '/', en: '/' },
   about: { de: 'profil', en: 'about' },
-  cv: { de: 'lebenslauf', en: 'cv' },
+  cv: { de: 'lebenslauf', en: 'resume' }, // <--- NEU: 'resume' statt 'cv'
   projects: { de: 'projekte', en: 'projects' },
-  ai: { de: 'ai', en: 'ai' }, // AI lassen wir gleich
+  ai: { de: 'ai', en: 'ai' },
   contact: { de: 'kontakt', en: 'contact' }
 };
 
 const t = {
-  home: 'Home', // Name ist in beiden Sprachen oft gleich, sonst hier anpassen
+  home: 'Home',
   about: lang === 'de' ? 'Profil' : 'Profile',
   cv: lang === 'de' ? 'Lebenslauf' : 'Resume',
   projects: lang === 'de' ? 'Projekte' : 'Projects',
@@ -24,7 +23,6 @@ const t = {
   contact: lang === 'de' ? 'Kontakt' : 'Contact'
 };
 
-// Links generieren basierend auf der aktuellen Sprache
 const links = [
   { name: t.home, href: getRelativeLocaleUrl(lang, routes.home[lang]) },
   { name: t.about, href: getRelativeLocaleUrl(lang, routes.about[lang]) },
@@ -35,7 +33,6 @@ const links = [
 ];
 
 const currentPath = Astro.url.pathname;
-// Normalize: Slash am Ende entfernen für Vergleich
 const normalize = (path: string) => path.length > 1 && path.endsWith('/') ? path.slice(0, -1) : path;
 ---
 

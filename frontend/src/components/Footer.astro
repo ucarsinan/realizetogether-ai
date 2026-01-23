@@ -3,12 +3,11 @@ import { getRelativeLocaleUrl } from 'astro:i18n';
 const currentYear = new Date().getFullYear();
 const lang = Astro.currentLocale || 'de';
 
-// Mapping (wie in Navbar)
 const routes = {
   home: { de: '/', en: '/' },
   about: { de: 'profil', en: 'about' },
   projects: { de: 'projekte', en: 'projects' },
-  cv: { de: 'lebenslauf', en: 'cv' },
+  cv: { de: 'lebenslauf', en: 'resume' }, // <--- HIER 'resume'
   contact: { de: 'kontakt', en: 'contact' },
   privacy: { de: 'datenschutz', en: 'privacy' },
   imprint: { de: 'impressum', en: 'imprint' }
@@ -25,7 +24,7 @@ const t = {
     home: 'Home',
     about: lang === 'de' ? 'Profil' : 'About Me',
     projects: lang === 'de' ? 'Projekte' : 'Projects',
-    cv: lang === 'de' ? 'Lebenslauf' : 'Resume',
+    cv: lang === 'de' ? 'Lebenslauf' : 'Resume', // <--- "Resume" als Label
     contact: lang === 'de' ? 'Kontakt' : 'Contact',
     privacy: lang === 'de' ? 'Datenschutz' : 'Privacy Policy',
     imprint: lang === 'de' ? 'Impressum' : 'Imprint'
@@ -46,7 +45,7 @@ const legal = [
 ];
 ---
 <footer class="bg-slate-950 border-t border-slate-900 pt-16 pb-8 text-sm">
-  <div class="max-w-6xl mx-auto px-4">
+    <div class="max-w-6xl mx-auto px-4">
     <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
       <div class="md:col-span-2 space-y-4">
         <a
