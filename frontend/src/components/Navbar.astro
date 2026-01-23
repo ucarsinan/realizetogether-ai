@@ -4,28 +4,38 @@ import { getRelativeLocaleUrl } from 'astro:i18n';
 
 const lang = Astro.currentLocale || 'de';
 
-// Texte basierend auf Sprache
+// Mapping: Welche Seite heißt wie in welcher Sprache?
+// Das brauchen wir, um die korrekten Links zu bauen.
+const routes = {
+  home: { de: '/', en: '/' },
+  about: { de: 'profil', en: 'about' },
+  cv: { de: 'lebenslauf', en: 'cv' },
+  projects: { de: 'projekte', en: 'projects' },
+  ai: { de: 'ai', en: 'ai' }, // AI lassen wir gleich
+  contact: { de: 'kontakt', en: 'contact' }
+};
+
 const t = {
-  home: lang === 'de' ? 'Home' : 'Home',
+  home: 'Home', // Name ist in beiden Sprachen oft gleich, sonst hier anpassen
   about: lang === 'de' ? 'Profil' : 'Profile',
   cv: lang === 'de' ? 'Lebenslauf' : 'Resume',
   projects: lang === 'de' ? 'Projekte' : 'Projects',
-  showcase: lang === 'de' ? 'AI Showcase' : 'AI Showcase', 
+  showcase: 'AI Showcase',
   contact: lang === 'de' ? 'Kontakt' : 'Contact'
 };
 
+// Links generieren basierend auf der aktuellen Sprache
 const links = [
-  { name: t.home, href: getRelativeLocaleUrl(lang, '/') },
-  { name: t.about, href: getRelativeLocaleUrl(lang, 'about') },
-  { name: t.cv, href: getRelativeLocaleUrl(lang, 'cv') },
-  { name: t.projects, href: getRelativeLocaleUrl(lang, 'projects') },
-  { name: t.showcase, href: getRelativeLocaleUrl(lang, 'ai') }, 
-  { name: t.contact, href: getRelativeLocaleUrl(lang, 'contact') }
+  { name: t.home, href: getRelativeLocaleUrl(lang, routes.home[lang]) },
+  { name: t.about, href: getRelativeLocaleUrl(lang, routes.about[lang]) },
+  { name: t.cv, href: getRelativeLocaleUrl(lang, routes.cv[lang]) },
+  { name: t.projects, href: getRelativeLocaleUrl(lang, routes.projects[lang]) },
+  { name: t.showcase, href: getRelativeLocaleUrl(lang, routes.ai[lang]) },
+  { name: t.contact, href: getRelativeLocaleUrl(lang, routes.contact[lang]) }
 ];
 
 const currentPath = Astro.url.pathname;
-
-// Hilfsfunktion: Slash am Ende entfernen für sauberen Vergleich (ausser bei Root)
+// Normalize: Slash am Ende entfernen für Vergleich
 const normalize = (path: string) => path.length > 1 && path.endsWith('/') ? path.slice(0, -1) : path;
 ---
 
@@ -46,7 +56,6 @@ const normalize = (path: string) => path.length > 1 && path.endsWith('/') ? path
         <div class="flex items-baseline space-x-4">
           {
             links.map((link, index) => {
-              // FIX: Home (Index 0) braucht EXAKTEN Match. Andere dürfen "starten mit".
               const isHome = index === 0;
               const isActive = isHome 
                 ? normalize(currentPath) === normalize(link.href)
@@ -94,7 +103,6 @@ const normalize = (path: string) => path.length > 1 && path.endsWith('/') ? path
     <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
       {
         links.map((link, index) => {
-           // Gleiche Logik für Mobile
            const isHome = index === 0;
            const isActive = isHome 
              ? normalize(currentPath) === normalize(link.href)

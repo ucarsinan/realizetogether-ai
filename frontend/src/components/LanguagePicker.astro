@@ -5,15 +5,41 @@ const currentLang = Astro.currentLocale || 'de';
 const currentPath = Astro.url.pathname;
 const targetLang = currentLang === 'de' ? 'en' : 'de';
 
+// 1. Pfad in Teile zerlegen
 const segments = currentPath.split('/').filter(Boolean);
 
-// Wenn das erste Segment 'en' oder 'de' ist, entfernen wir es, um den reinen Slug zu bekommen
+// Wenn das erste Segment die Sprache ist ('en'), entfernen wir es, um den "Kern-Slug" zu bekommen
 if (segments.length > 0 && (segments[0] === 'en' || segments[0] === 'de')) {
   segments.shift(); 
 }
 
 const slug = segments.join('/');
-const targetUrl = getRelativeLocaleUrl(targetLang, slug);
+
+// 2. Mapping-Tabelle für die Übersetzung der URLs
+// Key = Aktueller Slug, Value = Ziel-Slug in der anderen Sprache
+const routeTranslations: Record<string, string> = {
+    // DE -> EN
+    'lebenslauf': 'cv',
+    'projekte': 'projects',
+    'profil': 'about',
+    'kontakt': 'contact',
+    'impressum': 'imprint',
+    'datenschutz': 'privacy',
+    
+    // EN -> DE
+    'cv': 'lebenslauf',
+    'projects': 'projekte',
+    'about': 'profil',
+    'contact': 'kontakt',
+    'imprint': 'impressum',
+    'privacy': 'datenschutz'
+};
+
+// 3. Ziel-Slug ermitteln (wenn er in der Liste ist, übersetzen, sonst behalten)
+// z.B. "lebenslauf" wird zu "cv", aber "ai" bleibt "ai"
+const translatedSlug = routeTranslations[slug] || slug;
+
+const targetUrl = getRelativeLocaleUrl(targetLang, translatedSlug);
 ---
 
 <a
