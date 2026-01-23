@@ -1,7 +1,7 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import MoodWidget from '../components/MoodWidget.astro';
-import ImageAnalyzer from '../components/ImageAnalyzer.astro';
+import Layout from '../../layouts/Layout.astro';
+import MoodWidget from '../../components/MoodWidget.astro';
+import ImageAnalyzer from '../../components/ImageAnalyzer.astro';
 ---
 
 <Layout title="AI Showcase | Sinan.AI">
@@ -12,9 +12,9 @@ import ImageAnalyzer from '../components/ImageAnalyzer.astro';
         AI Engineering Showcase
       </h1>
       <p class="text-slate-400 text-lg max-w-2xl mx-auto leading-relaxed animate-fade-in-up delay-100">
-        Hier demonstriere ich praktische Anwendungen moderner KI-Technologien:
-        Von <strong class="text-blue-400">multimodaler Bildanalyse</strong> bis hin zu <strong class="text-green-400">strukturierter Textverarbeitung</strong> (Structured Output).
-        Alles live verbunden mit meinem Python FastAPI Backend.
+        Here I demonstrate practical applications of modern AI technologies:
+        From <strong class="text-blue-400">multimodal image analysis</strong> to <strong class="text-green-400">structured text processing</strong> (Structured Output).
+        Everything connected live to my Python FastAPI backend.
       </p>
     </div>
 
@@ -28,7 +28,7 @@ import ImageAnalyzer from '../components/ImageAnalyzer.astro';
           <h2 class="text-2xl font-bold text-white">Sentiment & Structured Output</h2>
         </div>
         
-        <MoodWidget lang="de" />
+        <MoodWidget lang="en" />
       </div>
 
       <div class="animate-fade-in-right delay-300">
@@ -36,10 +36,10 @@ import ImageAnalyzer from '../components/ImageAnalyzer.astro';
           <div class="p-3 bg-purple-500/20 rounded-lg text-purple-400">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
           </div>
-          <h2 class="text-2xl font-bold text-white">Vision & UX Analyse</h2>
+          <h2 class="text-2xl font-bold text-white">Vision & UX Analysis</h2>
         </div>
 
-        <ImageAnalyzer lang="de" />
+        <ImageAnalyzer lang="en" />
       </div>
 
     </div>
