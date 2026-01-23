@@ -24,6 +24,9 @@ const links = [
 ];
 
 const currentPath = Astro.url.pathname;
+
+// Hilfsfunktion: Slash am Ende entfernen für sauberen Vergleich (ausser bei Root)
+const normalize = (path: string) => path.length > 1 && path.endsWith('/') ? path.slice(0, -1) : path;
 ---
 
 <nav class="sticky top-0 z-50 w-full bg-slate-900/80 backdrop-blur-md border-b border-slate-800">
@@ -42,19 +45,27 @@ const currentPath = Astro.url.pathname;
       <div class="hidden md:flex items-center gap-6">
         <div class="flex items-baseline space-x-4">
           {
-            links.map((link) => (
-              <a
-                href={link.href}
-                class:list={[
-                  'px-3 py-2 rounded-md text-sm font-medium transition-all duration-200',
-                  currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href))
-                    ? 'bg-slate-800 text-emerald-400 border border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.1)]'
-                    : 'text-slate-300 hover:text-white hover:bg-slate-800'
-                ]}
-              >
-                {link.name}
-              </a>
-            ))
+            links.map((link, index) => {
+              // FIX: Home (Index 0) braucht EXAKTEN Match. Andere dürfen "starten mit".
+              const isHome = index === 0;
+              const isActive = isHome 
+                ? normalize(currentPath) === normalize(link.href)
+                : currentPath.startsWith(link.href);
+
+              return (
+                <a
+                  href={link.href}
+                  class:list={[
+                    'px-3 py-2 rounded-md text-sm font-medium transition-all duration-200',
+                    isActive
+                      ? 'bg-slate-800 text-emerald-400 border border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.1)]'
+                      : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                  ]}
+                >
+                  {link.name}
+                </a>
+              );
+            })
           }
         </div>
         <LanguagePicker />
@@ -82,19 +93,27 @@ const currentPath = Astro.url.pathname;
   <div id="mobile-menu" class="hidden md:hidden bg-slate-900 border-b border-slate-800">
     <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
       {
-        links.map((link) => (
-          <a
-            href={link.href}
-            class:list={[
-              'block px-3 py-2 rounded-md text-base font-medium',
-              currentPath === link.href
-                ? 'bg-slate-800 text-emerald-400'
-                : 'text-slate-300 hover:text-white hover:bg-slate-800'
-            ]}
-          >
-            {link.name}
-          </a>
-        ))
+        links.map((link, index) => {
+           // Gleiche Logik für Mobile
+           const isHome = index === 0;
+           const isActive = isHome 
+             ? normalize(currentPath) === normalize(link.href)
+             : currentPath.startsWith(link.href);
+
+           return (
+            <a
+              href={link.href}
+              class:list={[
+                'block px-3 py-2 rounded-md text-base font-medium',
+                isActive
+                  ? 'bg-slate-800 text-emerald-400'
+                  : 'text-slate-300 hover:text-white hover:bg-slate-800'
+              ]}
+            >
+              {link.name}
+            </a>
+          );
+        })
       }
     </div>
   </div>
