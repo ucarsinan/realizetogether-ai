@@ -2,25 +2,27 @@
 const { lang = 'de' } = Astro.props;
 const API_URL = import.meta.env.PUBLIC_API_URL;
 
-// Texte basierend auf Sprache
+// Texte & Übersetzungen
 const t = {
   de: {
     title: "AI Stimmungs-Barometer",
     desc: "Schreibe eine Nachricht und lass die KI analysieren, wie sie wirkt.",
     placeholder: "Gib hier deinen Text ein (z.B. eine E-Mail oder Chat-Nachricht)...",
     btn: "Analysieren",
-    emotion: "Erkannte Emotion:",
+    emotionLabel: "Erkannte Emotion:",
     tip: "KI TIPP:",
-    tech: "Technik: Pydantic v2, LangChain, FastAPI. Die KI analysiert nicht nur Text, sondern liefert garantiertes JSON für die Weiterverarbeitung."
+    techLabel: "Technik:", // <--- Hier DE
+    tech: "Pydantic v2, LangChain, FastAPI. Die KI analysiert nicht nur Text, sondern liefert garantiertes JSON für die Weiterverarbeitung."
   },
   en: {
     title: "AI Mood Barometer",
     desc: "Write a message and let the AI analyze its emotional impact.",
     placeholder: "Enter your text here (e.g., an email or chat message)...",
     btn: "Analyze",
-    emotion: "Detected Emotion:",
+    emotionLabel: "Detected Emotion:",
     tip: "AI TIP:",
-    tech: "Tech Stack: Pydantic v2, LangChain, FastAPI. The AI analyzes text and delivers guaranteed JSON structured output."
+    techLabel: "Tech Stack:", // <--- Hier EN
+    tech: "Pydantic v2, LangChain, FastAPI. The AI analyzes text and delivers guaranteed JSON structured output."
   }
 };
 
@@ -52,7 +54,7 @@ const text = lang === 'en' ? t.en : t.de;
 
   <div id={`mood-result-${lang}`} class="hidden mt-6 pt-4 border-t border-slate-700 animate-fade-in">
     <div class="flex justify-between items-center mb-2">
-      <span class="text-slate-400 text-sm">{text.emotion}</span>
+      <span class="text-slate-400 text-sm">{text.emotionLabel}</span>
       <span id={`mood-badge-${lang}`} class="px-2 py-1 bg-slate-700 rounded text-xs font-bold uppercase tracking-wider text-white">
         UNDEFINED
       </span>
@@ -74,7 +76,7 @@ const text = lang === 'en' ? t.en : t.de;
 </div>
 
 <div class="mt-4 p-4 bg-slate-900/50 rounded-lg border border-slate-800 text-sm text-slate-400">
-  <strong class="text-blue-400">Technik:</strong> {text.tech}
+  <strong class="text-blue-400">{text.techLabel}</strong> {text.tech}
 </div>
 
 <script define:vars={{ API_URL, lang }}>
@@ -85,6 +87,15 @@ const text = lang === 'en' ? t.en : t.de;
   const bar = document.getElementById(`mood-bar-${lang}`);
   const tipText = document.getElementById(`mood-tip-${lang}`);
 
+  // FIX: Übersetzungstabelle für Backend-Antworten
+  const emotionMap = {
+    'freude': { de: 'Freude', en: 'Joy' },
+    'wut': { de: 'Wut', en: 'Anger' },
+    'trauer': { de: 'Trauer', en: 'Sadness' },
+    'angst': { de: 'Angst', en: 'Fear' },
+    'neutral': { de: 'Neutral', en: 'Neutral' }
+  };
+
   btn.addEventListener('click', async () => {
     const text = input.value;
     if (!text) return;
@@ -93,7 +104,6 @@ const text = lang === 'en' ? t.en : t.de;
     btn.innerHTML = lang === 'en' ? "Analyzing..." : "Analysiere...";
     
     try {
-      // WICHTIG: Nutzt den korrekten /api/analyze Endpunkt
       const res = await fetch(`${API_URL}/api/analyze`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -103,14 +113,15 @@ const text = lang === 'en' ? t.en : t.de;
       const data = await res.json();
       
       if (data.score !== undefined) {
-        // Update UI
-        badge.innerText = data.emotion;
+        // FIX: Hier übersetzen wir das Backend-Ergebnis (z.B. "freude" -> "Joy")
+        const rawEmotion = data.emotion.toLowerCase();
+        const displayEmotion = emotionMap[rawEmotion] ? emotionMap[rawEmotion][lang] : rawEmotion;
         
-        // Score von -1 bis 1 auf 0% bis 100% mappen
+        badge.innerText = displayEmotion;
+        
         const percentage = ((data.score + 1) / 2) * 100;
         bar.style.width = `${percentage}%`;
         
-        // Farbe je nach Emotion
         if (data.score > 0.3) {
             bar.className = "bg-green-500 h-2.5 rounded-full transition-all duration-1000";
             badge.className = "px-2 py-1 bg-green-900 text-green-300 rounded text-xs font-bold uppercase";
