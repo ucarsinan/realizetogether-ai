@@ -3,6 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field 
 from typing import Literal, Optional
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_openai import ChatOpenAI
+from langchain_groq import ChatGroq
+from langchain_anthropic import ChatAnthropic
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages import HumanMessage
 from dotenv import load_dotenv
@@ -78,28 +81,57 @@ PROJECTS = [
 # ==========================================
 # 3. AI MODELS (Resilient Fallback System)
 # ==========================================
-api_key = os.getenv("GOOGLE_API_KEY")
-
 # Resilience: Multi-Model Fallback List
+# Syntax: provider:model_name
 LLM_MODELS = [
-    "gemini-flash-latest",
-    "gemini-2.0-flash", 
-    "gemini-pro-latest",
-    "gemini-flash-lite-latest"
+    "google:gemini-flash-latest",
+    "google:gemini-2.0-flash", 
+    "openai:gpt-4o-mini",
+    "groq:llama-3.3-70b-versatile",
+    "google:gemini-pro-latest",
+    "google:gemini-flash-lite-latest"
 ]
+
+def _get_llm(model_id: str, timeout: float = 30.0):
+    """Factory for different LLM providers."""
+    if ":" not in model_id:
+        return None
+    
+    provider, model_name = model_id.split(":", 1)
+    
+    if provider == "google":
+        key = os.getenv("GOOGLE_API_KEY")
+        if not key: return None
+        return ChatGoogleGenerativeAI(model=model_name, google_api_key=key, max_retries=0, request_timeout=timeout)
+    
+    elif provider == "openai":
+        key = os.getenv("OPENAI_API_KEY")
+        if not key: return None
+        return ChatOpenAI(model=model_name, api_key=key, max_retries=0, request_timeout=timeout)
+    
+    elif provider == "groq":
+        key = os.getenv("GROQ_API_KEY")
+        if not key: return None
+        return ChatGroq(model=model_name, groq_api_key=key, max_retries=0, request_timeout=timeout)
+    
+    elif provider == "anthropic":
+        key = os.getenv("ANTHROPIC_API_KEY")
+        if not key: return None
+        return ChatAnthropic(model=model_name, anthropic_api_key=key, max_retries=0, request_timeout=timeout)
+    
+    return None
 
 async def invoke_resiliently(prompt_or_messages, input_data=None, is_vision=False, structured_class=None):
     """Tries multiple models in sequence if one fails due to Quota or Timeout."""
     last_error: Exception = Exception("Unknown error")
-    for model_name in LLM_MODELS:
+    timeout = 30.0 if not is_vision else 45.0
+    
+    for model_id in LLM_MODELS:
         try:
-            # Create a temporary LLM with the current model name
-            temp_llm = ChatGoogleGenerativeAI(
-                model=model_name, 
-                google_api_key=api_key, 
-                max_retries=0,
-                request_timeout=30.0 if not is_vision else 45.0
-            )
+            temp_llm = _get_llm(model_id, timeout=timeout)
+            if not temp_llm:
+                print(f"⏩ Skipping {model_id} (No API Key or Invalid Provider)")
+                continue
             
             # Handle structured output if requested
             target_llm = temp_llm
@@ -116,7 +148,8 @@ async def invoke_resiliently(prompt_or_messages, input_data=None, is_vision=Fals
             return await target_llm.ainvoke(prompt_or_messages)
             
         except Exception as e:
-            print(f"⚠️ Model {model_name} failed: {str(e)[:100]}...")
+            error_msg = str(e)
+            print(f"⚠️ Model {model_id} failed: {error_msg[:100]}...")
             last_error = e
             continue
     raise last_error
@@ -148,10 +181,6 @@ def search_projects(query: str):
     return str(results)
 
 tools = [get_current_time, calculator, search_projects]
-
-# Agent Setup (Manual Tool Calling for better stability)
-# Gemini Flash support tool calling via bind_tools
-llm_with_tools = chat_llm.bind_tools(tools)
 
 # ==========================================
 # 4. DATA MODELS
@@ -198,10 +227,11 @@ async def chat_endpoint(request: ChatRequest):
     chain = ChatPromptTemplate.from_template(template)
     try:
         start_time = datetime.now()
-        res = await invoke_resiliently(chain, {"cv_text": CV_CONTEXT, "user_message": request.message})
+        res = await invoke_resiliently(chain, {"cv_text": str(CV_CONTEXT), "user_message": request.message})
         duration = (datetime.now() - start_time).total_seconds()
         print(f"✅ AI Response in {duration:.2f}s")
-        return {"reply": res.content}
+        reply = getattr(res, 'content', str(res))
+        return {"reply": reply}
     except Exception as e:
         if "429" in str(e):
             return {"reply": "Quota Error: Alle KI-Modelle haben ihr Tageslimit erreicht. Bitte versuche es später wieder! (API Quota Exhausted)"}
@@ -250,7 +280,8 @@ async def vision_endpoint(file: UploadFile = File(...), language: str = Form("de
 # --- SENTIMENT ---
 @app.post("/api/analyze")
 async def analyze_sentiment(request: AnalyzeRequest):
-    print(f"📊 Sentiment ({request.language}): {request.text[:30]}...")
+    display_text = str(request.text)
+    print(f"📊 Sentiment ({request.language}): {display_text[:30]}...")
     
     # SYSTEM PROMPT UMSCHALTEN
     if request.language == "en":
@@ -277,7 +308,8 @@ async def agent_endpoint(request: ChatRequest):
     try:
         start_time = datetime.now()
         
-        system_content = f"Du bist Sinans smarter Portfolio-Assistent. Nutze Tools wenn nötig. Antworte in der Sprache: {request.language}. CV Kontext: {str(CV_CONTEXT)[:500]}"
+        cv_str = str(CV_CONTEXT)
+        system_content = f"Du bist Sinans smarter Portfolio-Assistent. Nutze Tools wenn nötig. Antworte in der Sprache: {request.language}. CV Kontext: {cv_str[:500]}"
         messages: list = [
             {"role": "system", "content": system_content},
             {"role": "user", "content": request.message}
@@ -286,13 +318,16 @@ async def agent_endpoint(request: ChatRequest):
         # Helper for Agent Tool Binding (since we have to bind tools to each model in the fallback)
         async def agent_invoke(msgs: list):
             last_err: Exception = Exception("Agent fallback failed")
-            for model_name in LLM_MODELS:
+            for model_id in LLM_MODELS:
                 try:
-                    llm = ChatGoogleGenerativeAI(model=model_name, google_api_key=api_key, request_timeout=45.0)
+                    llm = _get_llm(model_id, timeout=45.0)
+                    if not llm: continue
+                    
                     llm_with_tools = llm.bind_tools(tools)
                     return await llm_with_tools.ainvoke(msgs)
                 except Exception as ex:
-                    print(f"⚠️ Agent Model {model_name} failed: {str(ex)[:50]}...")
+                    err_msg = str(ex)
+                    print(f"⚠️ Agent Model {model_id} failed: {err_msg[:50]}...")
                     last_err = ex
             raise last_err
 
