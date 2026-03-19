@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile, Request, Form
+from fastapi import FastAPI, File, UploadFile, Request, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
@@ -11,6 +11,8 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages import HumanMessage
 from dotenv import load_dotenv
 import os
+import ast
+import operator
 import base64
 import traceback
 import logging
@@ -22,10 +24,13 @@ import sentry_sdk
 # 1. SETUP
 # ==========================================
 load_dotenv()
-sentry_sdk.init(
-    dsn=os.getenv("SENTRY_DSN"),
-    traces_sample_rate=1.0,
-)
+sentry_dsn = os.getenv("SENTRY_DSN")
+if sentry_dsn:
+    sentry_sdk.init(
+        dsn=sentry_dsn,
+        traces_sample_rate=0.1,
+        environment=os.getenv("ENVIRONMENT", "production"),
+    )
 app = FastAPI()
 
 # DEBUG: Origin Logging
@@ -35,6 +40,15 @@ async def log_origin(request: Request, call_next):
     if origin:
         print(f"🔔 Request from Origin: {origin}")
     response = await call_next(request)
+    return response
+
+# Security Headers
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
     return response
 
 # CORS
@@ -53,17 +67,17 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_origin_regex=origin_regex,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_credentials=False,
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type"],
 )
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
-    logging.error("Unhandled exception:\n" + traceback.format_exc())
+    logging.error(f"Unhandled exception: {type(exc).__name__}", exc_info=exc)
     return JSONResponse(
         status_code=500,
-        content={"success": False, "error": f"Internal Server Error: {str(exc)}"},
+        content={"success": False, "error": "Internal Server Error"},
     )
 
 # ==========================================
@@ -178,14 +192,37 @@ def get_current_time():
     """Returns the current server time. Useful for greetings or context-aware replies."""
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+_CALC_OPS = {
+    ast.Add: operator.add,
+    ast.Sub: operator.sub,
+    ast.Mult: operator.mul,
+    ast.Div: operator.truediv,
+    ast.Pow: operator.pow,
+    ast.USub: operator.neg,
+    ast.UAdd: operator.pos,
+}
+
+def _safe_eval_node(node: ast.expr):
+    """Recursively evaluate a whitelisted AST node."""
+    if isinstance(node, ast.Constant) and isinstance(node.value, (int, float)):
+        return node.value
+    if isinstance(node, ast.BinOp) and type(node.op) in _CALC_OPS:
+        return _CALC_OPS[type(node.op)](_safe_eval_node(node.left), _safe_eval_node(node.right))
+    if isinstance(node, ast.UnaryOp) and type(node.op) in _CALC_OPS:
+        return _CALC_OPS[type(node.op)](_safe_eval_node(node.operand))
+    raise ValueError(f"Unsupported operation: {type(node).__name__}")
+
 @tool
 def calculator(expression: str):
     """Solves mathematical expressions. Input should be a simple math string like '123 * 45'."""
     try:
-        # Simple and relatively safe for a showcase
-        return str(eval(expression, {"__builtins__": None}, {}))
-    except Exception as e:
+        tree = ast.parse(expression.strip(), mode="eval")
+        result = _safe_eval_node(tree.body)
+        return str(result)
+    except (ValueError, ZeroDivisionError, SyntaxError) as e:
         return f"Fehler bei der Berechnung: {str(e)}"
+    except Exception:
+        return "Fehler: Ungültiger Ausdruck."
 
 @tool
 def search_projects(query: str):
@@ -202,12 +239,12 @@ tools = [get_current_time, calculator, search_projects]
 # 4. DATA MODELS
 # ==========================================
 class ChatRequest(BaseModel):
-    message: str
-    language: str = "de"
+    message: str = Field(..., min_length=1, max_length=2000)
+    language: Literal["de", "en"] = "de"
 
 class AnalyzeRequest(BaseModel):
-    text: str
-    language: str = "de"  # NEU: Sprache optional, default deutsch
+    text: str = Field(..., min_length=1, max_length=2000)
+    language: Literal["de", "en"] = "de"
 
 class SentimentAnalysis(BaseModel):
     score: float = Field(description="Score -1.0 to 1.0")
@@ -253,12 +290,23 @@ async def chat_endpoint(request: ChatRequest):
             return {"reply": "Quota Error: Alle KI-Modelle haben ihr Tageslimit erreicht. Bitte versuche es später wieder! (API Quota Exhausted)"}
         return {"reply": "Error/Fehler: " + str(e)}
 
+_MAX_UPLOAD_SIZE = 4 * 1024 * 1024  # 4 MB
+_ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp", "image/gif"}
+
 # --- VISION ---
 @app.post("/api/vision")
 async def vision_endpoint(file: UploadFile = File(...), language: str = Form("de")):
     print(f"🖼️ Vision: {file.filename} | Lang: {language}")
+
+    if file.content_type not in _ALLOWED_IMAGE_TYPES:
+        raise HTTPException(status_code=400, detail="Ungültiger Dateityp. Erlaubt: JPEG, PNG, WebP, GIF.")
+
     try:
         contents = await file.read()
+
+        if len(contents) > _MAX_UPLOAD_SIZE:
+            raise HTTPException(status_code=400, detail="Datei zu groß. Maximale Größe: 4 MB.")
+
         image_b64 = base64.b64encode(contents).decode("utf-8")
         
         # PROMPT UMSCHALTEN

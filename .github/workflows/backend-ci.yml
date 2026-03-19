@@ -3,6 +3,8 @@ name: Backend CI
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
   test:
@@ -18,3 +20,11 @@ jobs:
         run: python -c "import sys; sys.path.insert(0, 'backend'); import main"
         env:
           SENTRY_DSN: ""
+      - name: Run tests
+        run: cd backend && python -m pytest tests/ -v --timeout=30 -k "not (test_chat_endpoint_exists or test_analyze_sentiment_exists or test_agent_endpoint_exists or test_chat_response_structure or test_vision)"
+        env:
+          SENTRY_DSN: ""
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}

@@ -86,6 +86,7 @@ const text = lang === 'en' ? t.en : t.de;
 
 <script>
   import { marked } from 'marked';
+  import DOMPurify from 'isomorphic-dompurify';
 
   document.querySelectorAll<HTMLElement>('[data-lang]').forEach((container) => {
     const API_URL = container.dataset.apiUrl!;
@@ -126,7 +127,7 @@ const text = lang === 'en' ? t.en : t.de;
           } else {
             replyContent = data.reply;
           }
-          replyText.innerHTML = await marked.parse(replyContent);
+          replyText.innerHTML = DOMPurify.sanitize(await marked.parse(replyContent));
           resultArea.classList.remove('hidden');
           resultArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }

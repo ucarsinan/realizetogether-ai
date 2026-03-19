@@ -78,17 +78,56 @@ test.describe('Sinan.AI Comprehensive E2E Suite', () => {
 
   test('AI Showcase: Agent Chat interaction', async ({ page }) => {
     await page.goto('/ai');
-    
+
     const chatInput = page.locator('#agent-input-de');
     await chatInput.fill('Berechne 123 * 456');
-    
+
     const askBtn = page.locator('#agent-btn-de');
     await askBtn.click();
-    
+
     // Check for AI reply area
     const replyArea = page.locator('#agent-result-area-de');
     await expect(replyArea).toBeVisible({ timeout: 60000 });
     await expect(page.locator('#agent-reply-de')).not.toBeEmpty();
+  });
+
+  test('Fehlerfall: API gibt Fehler zurück - UI zeigt Fehlermeldung', async ({ page }) => {
+    // Mock: Chat-API antwortet mit Fehler
+    await page.route('**/api/chat', async (route) => {
+      await route.fulfill({ status: 500, body: 'Internal Server Error' });
+    });
+
+    // ChatWidget ist auf der Startseite
+    const input = page.locator('#user-input');
+    await input.fill('Testnachricht');
+    await page.locator('#send-btn').click();
+
+    // UI soll Fehlermeldung anzeigen, nicht blank/eingefroren
+    const chatContainer = page.locator('#chat-container');
+    await expect(chatContainer).toContainText(/nicht erreichbar|unreachable|error/i, { timeout: 10000 });
+  });
+
+  test('Impressum-Seite ist erreichbar', async ({ page }) => {
+    await page.goto('/impressum');
+    await expect(page).toHaveURL(/\/impressum/);
+    await expect(page.locator('h1').first()).toBeVisible();
+  });
+
+  test('Datenschutz-Seite ist erreichbar', async ({ page }) => {
+    await page.goto('/datenschutz');
+    await expect(page).toHaveURL(/\/datenschutz/);
+    await expect(page.locator('h1').first()).toBeVisible();
+  });
+
+  test('Agent Chat: Eingabe per Tastaturkürzel Ctrl+Enter', async ({ page }) => {
+    await page.goto('/ai');
+
+    const chatInput = page.locator('#agent-input-de');
+    await chatInput.fill('Wie spät ist es?');
+    await chatInput.press('Control+Enter');
+
+    const replyArea = page.locator('#agent-result-area-de');
+    await expect(replyArea).toBeVisible({ timeout: 30000 });
   });
 
 });
