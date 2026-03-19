@@ -24,4 +24,4 @@ COPY . .
 EXPOSE 8000
 
 # 7. Start-Befehl
-CMD ["sh", "-c", "gunicorn -k uvicorn.workers.UvicornWorker main:app --bind 0.0.0.0:$PORT"]
+CMD ["sh", "-c", "gunicorn -k uvicorn.workers.UvicornWorker --workers 1 main:app --bind 0.0.0.0:$PORT"]
