@@ -9,3 +9,4 @@ langchain-openai
 langchain-groq
 langchain-anthropic
 httpx
+python-multipart
