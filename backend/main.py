@@ -371,6 +371,11 @@ async def agent_endpoint(request: ChatRequest):
         print(f"❌ Agent Error: {e}")
         return {"reply": f"Sorry, mein System hängt gerade: {str(e)}"}
 
+# --- HEALTH ---
+@app.get("/health")
+async def health_check():
+    return {"status": "ok"}
+
 if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 8000))
