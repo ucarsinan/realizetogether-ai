@@ -24,15 +24,15 @@ const placeholderText = lang === 'de' ? 'Frage eingeben...' : 'Ask a question...
         <span class="relative flex h-3 w-3">
           <span
             id="status-ping"
-            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"
+            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"
           ></span>
-          <span id="status-dot" class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"
+          <span id="status-dot" class="relative inline-flex rounded-full h-3 w-3 bg-yellow-500"
           ></span>
         </span>
         <span
           id="status-text"
-          class="text-[10px] font-bold tracking-widest text-emerald-400 uppercase"
-          >System Online</span
+          class="text-[10px] font-bold tracking-widest text-yellow-400 uppercase"
+          >SYSTEM STARTING...</span
         >
       </div>
       <div class="text-[10px] text-slate-500 font-mono">GEMINI-1.5-FLASH</div>
@@ -102,7 +102,14 @@ const placeholderText = lang === 'de' ? 'Frage eingeben...' : 'Ask a question...
 
   function setStatus(state) {
     if (!statusText || !statusDot || !statusPing) return;
-    if (state === 'processing') {
+    if (state === 'starting') {
+      statusText.innerText = 'SYSTEM STARTING...';
+      statusText.className = 'text-[10px] font-bold tracking-widest text-yellow-400 uppercase';
+      statusDot.className = 'relative inline-flex rounded-full h-3 w-3 bg-yellow-500';
+      statusPing.classList.remove('hidden');
+      statusPing.className =
+        'animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75';
+    } else if (state === 'processing') {
       statusText.innerText = 'PROCESSING...';
       statusText.className = 'text-[10px] font-bold tracking-widest text-yellow-400 uppercase';
       statusDot.className = 'relative inline-flex rounded-full h-3 w-3 bg-yellow-500';
@@ -181,12 +188,45 @@ const placeholderText = lang === 'de' ? 'Frage eingeben...' : 'Ask a question...
     }
   }
 
+  async function warmupBackend() {
+    if (input) (input as HTMLInputElement).disabled = true;
+    if (btn) (btn as HTMLButtonElement).disabled = true;
+    setStatus('starting');
+
+    // Fire-and-forget no-cors ping to trigger Render cold-start
+    fetch(`${BASE_URL}/health`, { mode: 'no-cors' }).catch(() => {});
+
+    const maxWait = 120_000;
+    const interval = 3_000;
+    const start = Date.now();
+
+    while (Date.now() - start < maxWait) {
+      try {
+        const res = await fetch(`${BASE_URL}/health`);
+        if (res.ok) {
+          if (input) (input as HTMLInputElement).disabled = false;
+          if (btn) (btn as HTMLButtonElement).disabled = false;
+          setStatus('online');
+          return;
+        }
+      } catch {
+        // CORS error or network error = backend not ready yet
+      }
+      await new Promise((r) => setTimeout(r, interval));
+    }
+
+    appendMessage('Backend konnte nicht erreicht werden. Bitte Seite neu laden.', 'ai');
+    setStatus('error');
+  }
+
   if (btn) btn.addEventListener('click', sendMessage);
   if (input)
     input.addEventListener('keypress', (e) => {
       // @ts-ignore
       if (e.key === 'Enter') sendMessage();
     });
+
+  warmupBackend();
 </script>
 
 <style is:global>
