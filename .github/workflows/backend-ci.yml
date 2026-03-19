@@ -9,13 +9,15 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
       - name: Install dependencies
-        run: pip install -r backend/requirements.txt
+        run: pip install -r backend/requirements.txt pytest pytest-asyncio httpx
       - name: Check app imports
         run: python -c "import sys; sys.path.insert(0, 'backend'); import main"
         env:
