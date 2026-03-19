@@ -109,13 +109,6 @@ const placeholderText = lang === 'de' ? 'Frage eingeben...' : 'Ask a question...
       statusPing.classList.remove('hidden');
       statusPing.className =
         'animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75';
-    } else if (state === 'warming') {
-      statusText.innerText = 'WARMING UP...';
-      statusText.className = 'text-[10px] font-bold tracking-widest text-orange-400 uppercase';
-      statusDot.className = 'relative inline-flex rounded-full h-3 w-3 bg-orange-500';
-      statusPing.classList.remove('hidden');
-      statusPing.className =
-        'animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75';
     } else if (state === 'error') {
       statusText.innerText = 'CONNECTION ERROR';
       statusText.className = 'text-[10px] font-bold tracking-widest text-red-400 uppercase';
@@ -160,39 +153,6 @@ const placeholderText = lang === 'de' ? 'Frage eingeben...' : 'Ask a question...
     chatContainer.scrollTop = chatContainer.scrollHeight;
   }
 
-  // Render Free Tier Cold Start: bis zu 60s warten (6 × 10s)
-  async function fetchWithRetry(msg, lang, maxRetries = 6) {
-    let lastError = new Error('Backend nicht erreichbar. Bitte Seite neu laden.');
-    let warmingMsgShown = false;
-    for (let i = 0; i < maxRetries; i++) {
-      try {
-        const res = await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: msg, language: lang })
-        });
-        if (res.ok || res.status === 429 || i === maxRetries - 1) return res;
-        setStatus('warming');
-        if (!warmingMsgShown) {
-          appendMessage('⏳ Backend startet... (Render Free Tier benötigt ~30–60 Sek. beim ersten Aufruf)', 'ai');
-          warmingMsgShown = true;
-        }
-        await new Promise(r => setTimeout(r, 10000));
-      } catch (e) {
-        lastError = e instanceof Error ? e : new Error(String(e));
-        if (i < maxRetries - 1) {
-          setStatus('warming');
-          if (!warmingMsgShown) {
-            appendMessage('⏳ Backend startet... (Render Free Tier benötigt ~30–60 Sek. beim ersten Aufruf)', 'ai');
-            warmingMsgShown = true;
-          }
-          await new Promise(r => setTimeout(r, 10000));
-        }
-      }
-    }
-    throw lastError;
-  }
-
   async function sendMessage() {
     // @ts-ignore
     if (!input || !input.value.trim()) return;
@@ -201,36 +161,22 @@ const placeholderText = lang === 'de' ? 'Frage eingeben...' : 'Ask a question...
     // @ts-ignore
     input.value = '';
 
-    // 5. Sprache auslesen
     const currentLang = chatWrapper?.getAttribute('data-lang') || 'de';
-
     appendMessage(msg, 'user');
     setStatus('processing');
 
     try {
-      const res = await fetchWithRetry(msg, currentLang);
-
-      if (res.status === 429) {
-        appendMessage('⚠️ Ich denke gerade sehr intensiv nach (Rate Limit).', 'ai');
-        setStatus('error');
-        return;
-      }
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(
-          errorData.detail ? JSON.stringify(errorData.detail) : `Server Fehler (${res.status})`
-        );
-      }
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: msg, language: currentLang })
+      });
+      if (!res.ok) throw new Error(`Status ${res.status}`);
       const data = await res.json();
-      if (data && data.reply) {
-        appendMessage(data.reply, 'ai');
-      } else {
-        appendMessage('Fehler: Leere Antwort.', 'ai');
-      }
+      appendMessage(data.reply || 'Keine Antwort erhalten.', 'ai');
       setStatus('online');
-    } catch (e) {
-      // @ts-ignore
-      appendMessage(`Systemfehler: ${e.message}`, 'ai');
+    } catch {
+      appendMessage('Backend nicht erreichbar. Bitte in 30 Sek. erneut versuchen.', 'ai');
       setStatus('error');
     }
   }

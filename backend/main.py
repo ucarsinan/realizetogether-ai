@@ -371,7 +371,8 @@ async def agent_endpoint(request: ChatRequest):
         print(f"❌ Agent Error: {e}")
         return {"reply": f"Sorry, mein System hängt gerade: {str(e)}"}
 
-# --- HEALTH ---
+# --- HEALTH (Render health check) ---
+@app.get("/")
 @app.get("/health")
 async def health_check():
     return {"status": "ok"}
