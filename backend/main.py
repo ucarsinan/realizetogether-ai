@@ -16,6 +16,8 @@ import operator
 import base64
 import traceback
 import logging
+import httpx
+import re
 from datetime import datetime
 from langchain_core.tools import tool
 import sentry_sdk
@@ -233,7 +235,41 @@ def search_projects(query: str):
         return "Keine passenden Projekte gefunden."
     return str(results)
 
-tools = [get_current_time, calculator, search_projects]
+@tool
+async def web_search(query: str) -> str:
+    """Searches the web using DuckDuckGo and returns a summary of top results. Use this to find current information about any topic."""
+    try:
+        async with httpx.AsyncClient(timeout=10.0, follow_redirects=True) as client:
+            resp = await client.get(
+                "https://api.duckduckgo.com/",
+                params={"q": query, "format": "json", "no_html": "1", "skip_disambig": "1", "no_redirect": "1"}
+            )
+            data = resp.json()
+
+        results = []
+        if data.get("AbstractText"):
+            results.append(f"📌 {data['AbstractText']} (Quelle: {data.get('AbstractSource', '')})")
+        for topic in data.get("RelatedTopics", [])[:5]:
+            if isinstance(topic, dict) and topic.get("Text"):
+                results.append(f"• {topic['Text']}")
+
+        return "\n".join(results) if results else "Keine Ergebnisse gefunden."
+    except Exception as e:
+        return f"Web-Suche fehlgeschlagen: {str(e)}"
+
+@tool
+async def fetch_webpage(url: str) -> str:
+    """Fetches the text content of a webpage. Use this to read the full content of a URL found in web search results."""
+    try:
+        async with httpx.AsyncClient(timeout=15.0, follow_redirects=True) as client:
+            resp = await client.get(url, headers={"User-Agent": "Mozilla/5.0"})
+        text = re.sub(r"<[^>]+>", " ", resp.text)
+        text = re.sub(r"\s+", " ", text).strip()
+        return text[:3000]
+    except Exception as e:
+        return f"Fehler beim Abrufen der Seite: {str(e)}"
+
+tools = [get_current_time, calculator, search_projects, web_search, fetch_webpage]
 
 # ==========================================
 # 4. DATA MODELS
