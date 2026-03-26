@@ -14,55 +14,50 @@ const { article } = Astro.props;
 const renderedContent = article.content ? await marked(article.content) : null;
 ---
 
-<Layout title={`Sinan.AI - ${article.title}`}>
+<Layout title={`Sinan.Uçar - ${article.title}`}>
   <div class="max-w-6xl mx-auto px-4 py-12 md:py-16">
     <div class="max-w-3xl mx-auto">
-    <div class="mb-10 animate-fade-in">
-      <a
-        href="/en/blog"
-        class="text-slate-500 hover:text-emerald-400 text-sm font-medium transition-colors duration-200 inline-flex items-center gap-1 mb-8"
-      >
-        ← Back to Blog
-      </a>
+      <div class="mb-10 animate-fade-in">
+        <a
+          href="/en/blog"
+          class="text-slate-500 hover:text-emerald-400 text-sm font-medium transition-colors duration-200 inline-flex items-center gap-1 mb-8"
+        >
+          ← Back to Blog
+        </a>
 
-      <div class="flex flex-wrap gap-2 mb-6">
-        {
-          article.tags.map((tag) => (
-            <span class="bg-slate-800 text-emerald-400/80 text-xs px-2 py-1 rounded-md font-mono">
-              {tag}
-            </span>
-          ))
-        }
+        <div class="flex flex-wrap gap-2 mb-6">
+          {
+            article.tags.map((tag) => (
+              <span class="bg-slate-800 text-emerald-400/80 text-xs px-2 py-1 rounded-md font-mono">
+                {tag}
+              </span>
+            ))
+          }
+        </div>
+
+        <h1 class="text-3xl md:text-4xl font-bold text-white leading-tight mb-8">
+          {article.title}
+        </h1>
+
+        <div class="border-b border-slate-800 mb-10"></div>
       </div>
 
-      <h1
-        class="text-3xl md:text-4xl font-bold text-white leading-tight mb-8"
-      >
-        {article.title}
-      </h1>
-
-      <div class="border-b border-slate-800 mb-10"></div>
-    </div>
-
-    {
-      renderedContent ? (
-        <div
-          class="prose-blog"
-          set:html={renderedContent}
-        />
-      ) : (
-        <div class="text-center py-20 space-y-4">
-          <div class="text-4xl text-slate-700">✦</div>
-          <p class="text-slate-500 text-lg">This article is coming soon.</p>
-          <a
-            href="/en/blog"
-            class="inline-block text-blue-400 hover:text-emerald-400 text-sm font-medium transition-colors duration-200"
-          >
-            ← Back to Blog
-          </a>
-        </div>
-      )
-    }
+      {
+        renderedContent ? (
+          <div class="prose-blog" set:html={renderedContent} />
+        ) : (
+          <div class="text-center py-20 space-y-4">
+            <div class="text-4xl text-slate-700">✦</div>
+            <p class="text-slate-500 text-lg">This article is coming soon.</p>
+            <a
+              href="/en/blog"
+              class="inline-block text-blue-400 hover:text-emerald-400 text-sm font-medium transition-colors duration-200"
+            >
+              ← Back to Blog
+            </a>
+          </div>
+        )
+      }
     </div>
   </div>
 </Layout>
@@ -113,7 +108,8 @@ const renderedContent = article.content ? await marked(article.content) : null;
     margin-bottom: 0.75rem;
   }
 
-  .prose-blog ul, .prose-blog ol {
+  .prose-blog ul,
+  .prose-blog ol {
     margin-bottom: 1.5rem;
     padding-left: 1.5rem;
   }

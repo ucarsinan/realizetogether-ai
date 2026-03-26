@@ -33,19 +33,19 @@ const links = [
 ];
 
 const currentPath = Astro.url.pathname;
-const normalize = (path: string) => path.length > 1 && path.endsWith('/') ? path.slice(0, -1) : path;
+const normalize = (path: string) =>
+  path.length > 1 && path.endsWith('/') ? path.slice(0, -1) : path;
 ---
 
 <nav class="sticky top-0 z-50 w-full bg-slate-900/80 backdrop-blur-md border-b border-slate-800">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-16">
-      
       <div class="flex-shrink-0">
         <a
           href={getRelativeLocaleUrl(lang, '/')}
           class="font-mono text-2xl font-bold bg-gradient-to-r from-blue-400 to-emerald-400 text-transparent bg-clip-text hover:opacity-80 transition-opacity"
         >
-          Sinan.AI
+          Sinan.Uçar
         </a>
       </div>
 
@@ -54,7 +54,7 @@ const normalize = (path: string) => path.length > 1 && path.endsWith('/') ? path
           {
             links.map((link, index) => {
               const isHome = index === 0;
-              const isActive = isHome 
+              const isActive = isHome
                 ? normalize(currentPath) === normalize(link.href)
                 : currentPath.startsWith(link.href);
 
@@ -85,11 +85,33 @@ const normalize = (path: string) => path.length > 1 && path.endsWith('/') ? path
           class="inline-flex items-center justify-center p-2 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 focus:outline-none"
         >
           <span class="sr-only">Open main menu</span>
-          <svg id="icon-menu" class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          <svg
+            id="icon-menu"
+            class="block h-6 w-6"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"></path>
           </svg>
-          <svg id="icon-close" class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          <svg
+            id="icon-close"
+            class="hidden h-6 w-6"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"></path>
           </svg>
         </button>
       </div>
@@ -100,12 +122,12 @@ const normalize = (path: string) => path.length > 1 && path.endsWith('/') ? path
     <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
       {
         links.map((link, index) => {
-           const isHome = index === 0;
-           const isActive = isHome 
-             ? normalize(currentPath) === normalize(link.href)
-             : currentPath.startsWith(link.href);
+          const isHome = index === 0;
+          const isActive = isHome
+            ? normalize(currentPath) === normalize(link.href)
+            : currentPath.startsWith(link.href);
 
-           return (
+          return (
             <a
               href={link.href}
               class:list={[

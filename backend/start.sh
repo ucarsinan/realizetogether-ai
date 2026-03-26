@@ -13,6 +13,6 @@ else
 fi
 
 # 3. Server starten
-echo "🚀 Starte Sinan.AI Backend..."
+echo "🚀 Starte Sinan.Uçar Backend..."
 # --reload sorgt dafür, dass der Server neu startet, wenn du Code änderst!
 uvicorn main:app --reload --port 8000 --host 0.0.0.0

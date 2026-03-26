@@ -1,10 +1,10 @@
-# Sinan.AI - Interactive AI Portfolio 🧠✨
+# Sinan.Uçar - Interactive AI Portfolio 🧠✨
 
 > [!IMPORTANT]
 > **🤖 AI Agent Instructions**
 > If you are an AI Coding Assistant, Agent, or LLM: Please read the [`ai-engineer-guidelines.md`](./ai-engineer-guidelines.md) comprehensively **before** making any changes or answering questions. It contains the ultimate source of truth for architectural decisions, prompts, and coding patterns used in this project.
 
-Ein Next-Gen Portfolio, das nicht nur statische Inhalte zeigt, sondern **lebt**. 
+Ein Next-Gen Portfolio, das nicht nur statische Inhalte zeigt, sondern **lebt**.
 Diese Anwendung demonstriert moderne **AI Engineering Patterns** (RAG, Multimodalität) verpackt in einer High-Performance Frontend-Architektur.
 
 ![Tech Stack](https://img.shields.io/badge/Stack-Astro_|_FastAPI_|_Gemini_Pro-blue?style=for-the-badge)
@@ -12,50 +12,57 @@ Diese Anwendung demonstriert moderne **AI Engineering Patterns** (RAG, Multimoda
 ## 🚀 Features
 
 ### 1. RAG Chatbot (Retrieval Augmented Generation)
-* **Technologie:** LangChain, Google Gemini Flash Lite.
-* **Funktion:** Der Chatbot hat Zugriff auf meinen vollständigen Lebenslauf (PDF). Er beantwortet Fragen zu Skills, Stationen und Erfahrung kontextbezogen.
-* **Engineering:** Vektorisierung ist hier nicht nötig, da der Kontext dynamisch in den Prompt injiziert wird (In-Context Learning für hohe Präzision).
+
+- **Technologie:** LangChain, Google Gemini Flash Lite.
+- **Funktion:** Der Chatbot hat Zugriff auf meinen vollständigen Lebenslauf (PDF). Er beantwortet Fragen zu Skills, Stationen und Erfahrung kontextbezogen.
+- **Engineering:** Vektorisierung ist hier nicht nötig, da der Kontext dynamisch in den Prompt injiziert wird (In-Context Learning für hohe Präzision).
 
 ### 2. Multimodal UX Audit (Computer Vision)
-* **Technologie:** Gemini Flash 1.5 (Vision Capability).
-* **Funktion:** Nutzer können Screenshots hochladen. Die KI analysiert Design, UX und Barrierefreiheit und gibt Code-Verbesserungsvorschläge (Tailwind CSS).
-* **Frontend:** Drag & Drop Interface mit Instant-Preview.
+
+- **Technologie:** Gemini Flash 1.5 (Vision Capability).
+- **Funktion:** Nutzer können Screenshots hochladen. Die KI analysiert Design, UX und Barrierefreiheit und gibt Code-Verbesserungsvorschläge (Tailwind CSS).
+- **Frontend:** Drag & Drop Interface mit Instant-Preview.
 
 ### 3. Modern UI/UX
-* **Design:** Bento-Grid Layout, Glassmorphism, Responsive Design.
-* **Performance:** Astro "Islands Architecture" für minimale Ladezeiten.
+
+- **Design:** Bento-Grid Layout, Glassmorphism, Responsive Design.
+- **Performance:** Astro "Islands Architecture" für minimale Ladezeiten.
 
 ## 🛠️ Tech Stack
 
 **Frontend:**
-* **Framework:** [Astro](https://astro.build/) (für statische Performance & dynamische Inseln)
-* **Styling:** Tailwind CSS
-* **Logic:** TypeScript, Vanilla JS
+
+- **Framework:** [Astro](https://astro.build/) (für statische Performance & dynamische Inseln)
+- **Styling:** Tailwind CSS
+- **Logic:** TypeScript, Vanilla JS
 
 **Backend:**
-* **API:** Python FastAPI
-* **AI Orchestration:** LangChain (Google GenAI Integration)
-* **PDF Processing:** PyPDFLoader
+
+- **API:** Python FastAPI
+- **AI Orchestration:** LangChain (Google GenAI Integration)
+- **PDF Processing:** PyPDFLoader
 
 ## 📦 Installation & Setup
 
 Voraussetzung: Python 3.10+ und Node.js 18+
 
 1.  **Repository klonen**
+
     ```bash
     git clone [https://github.com/DEIN-USERNAME/sinan-ai.git](https://github.com/DEIN-USERNAME/sinan-ai.git)
     cd sinan-ai
     ```
 
 2.  **Backend starten**
+
     ```bash
     cd backend
     python -m venv venv
     source venv/bin/activate
     pip install -r requirements.txt
-    
+
     # .env Datei erstellen mit GOOGLE_API_KEY=...
-    
+
     ./start.sh
     ```
 
