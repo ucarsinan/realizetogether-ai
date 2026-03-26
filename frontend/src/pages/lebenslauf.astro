@@ -5,23 +5,30 @@ import TimelineItem from '../components/TimelineItem.astro';
 // Daten strikt nach cv.pdf
 const stations = [
   {
+    year: 'Seit 01/2025',
+    title: 'AI Solutions Architect (Independent R&D)',
+    company: 'Realize Together (R&D Project)',
+    description:
+      'Eigenverantwortliche Konzeption produktionsnaher Enterprise-Architekturen zur Evaluierung modernster KI-Integrationen. Fokus auf die sichere, deterministische Anbindung von LLMs an klassische Backend-Systeme.',
+    tags: ['Python', 'FastAPI', 'LangChain', 'Pydantic', 'RAG', 'AI Architecture']
+  },
+  {
     year: 'Seit 10/2022',
-    title: 'Frontend-Entwickler (Remote)',
+    title: 'Senior Software Engineer (Remote)',
     company: 'Ceyoniq GmbH, Bielefeld',
     description:
-      'Konzeption und Implementierung modularer Web Components (Lit) und Vue-Integrationen für unternehmensweite Plattformen. Aufbau und Pflege einer Storybook-Komponentenbibliothek. Etablierung einer robusten Testarchitektur mit Playwright sowie Aufbau automatisierter CI/CD-Pipelines (GitLab).',
+      'Architektonische Verantwortung für skalierbare Enterprise-Plattformen. Architektur asynchroner REST-Schnittstellen (Node.js/Express) mit Fokus auf Datenfluss-Optimierung ("Data Readiness") für datengetriebene und zukünftig KI-gestützte Workflows. Etablierung robuster Engineering-Standards (CI/CD, Playwright, Security Hardening).',
     tags: [
-      'Vue.js',
-      'Lit (Web Components)',
-      'Storybook',
-      'Playwright',
-      'GitLab CI/CD',
-      'TypeScript'
+      'TypeScript',
+      'Node.js',
+      'System Design',
+      'CI/CD',
+      'Playwright'
     ]
   },
   {
     year: '12/2020 – 09/2022',
-    title: 'Web-Entwickler (Freelancer)',
+    title: 'Senior Software Engineer / Technical Consultant',
     company: 'Fil & Muz, Duisburg',
     description:
       'Planung und Realisierung responsiver Landingpages, Microsites und interaktiver Rich Ads für KMU und Agenturkunden. Optimierung von Performance und Cross-Browser-Kompatibilität. Strategische Beratung hinsichtlich User Experience und Webarchitekturen.',
@@ -29,7 +36,7 @@ const stations = [
   },
   {
     year: '05/2019 – 11/2020',
-    title: 'Frontend-Entwickler',
+    title: 'Software Engineer (Frontend & Process Automation)',
     company: 'Smoox GmbH, Düsseldorf',
     description:
       'Entwicklung dynamischer Werbeformate und Microsites. Einführung wiederverwendbarer Bannermodule sowie Automatisierung der Build- und Deployment-Prozesse.',
@@ -37,7 +44,7 @@ const stations = [
   },
   {
     year: '10/2014 – 12/2018',
-    title: 'IT Consultant',
+    title: 'Senior IT Consultant & Enterprise Architect',
     company: 'ÇIĞIŞ Software Systems Ltd., Istanbul',
     description:
       'Leitung von Enterprise-Webprojekten, einschließlich Anforderungsanalyse, Architekturdesign und Implementierungskoordination. Einführung agiler Methoden und Begleitung komplexer Rollouts in multinationalen Teams.',
@@ -45,7 +52,7 @@ const stations = [
   },
   {
     year: '06/2009 – 08/2014',
-    title: 'Software-Entwickler',
+    title: 'Backend Software Engineer (C# / .NET)',
     company: 'Invitec GmbH, Duisburg',
     description:
       'Portierung und kontinuierliche Weiterentwicklung eines Kernprodukts in C#/.NET (Instacount®) einschließlich Performance-Tuning und Reporting mit SQL und Crystal Reports.',
@@ -57,7 +64,7 @@ const stations = [
     company: 'Technische Universität Dortmund',
     description:
       'Diplomarbeit: Konnektionistische Systeme in der natürlichen und künstlichen Intelligenz sowie in den kognitiven Neurowissenschaften – Strukturen, Lernen und Fähigkeiten.',
-    tags: ['Diplom', 'Artificial Intelligence', 'Neural Networks', 'Cognitive Neuroscience']
+    tags: ['Artificial Intelligence', 'Diplom', 'Neural Networks', 'Cognitive Neuroscience']
   }
 ];
 ---
@@ -71,8 +78,7 @@ const stations = [
         Beruflicher Werdegang
       </h1>
       <p class="text-slate-400 text-lg max-w-2xl mx-auto">
-        Über 15 Jahre Erfahrung in der Entwicklung performanter, skalierbarer Web- und
-        Backendlösungen.
+        Über 15 Jahre Erfahrung im Enterprise Software Engineering. Fokus auf die sichere, deterministische Integration von Generativer KI in komplexe Systemlandschaften.
       </p>
     </div>
 
