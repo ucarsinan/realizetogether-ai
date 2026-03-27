@@ -428,7 +428,7 @@ async def agent_endpoint(request: ChatRequest):
         # Helper for Agent Tool Binding (since we have to bind tools to each model in the fallback)
         async def agent_invoke(msgs: list):
             last_err: Exception = Exception("Agent fallback failed")
-            for model_id in LLM_MODELS:
+            for model_id in LLM_MODELS_TEXT:
                 try:
                     llm = _get_llm(model_id, timeout=45.0)
                     if not llm: continue
