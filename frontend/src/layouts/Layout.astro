@@ -1,5 +1,4 @@
 ---
-// Importiere die neue Komponente
 import CookieBanner from '../components/CookieBanner.astro';
 import Footer from '../components/Footer.astro';
 import Navbar from '../components/Navbar.astro';
@@ -7,10 +6,32 @@ import '../styles/global.css';
 
 interface Props {
   title?: string;
+  description?: string;
 }
 
-const { title = 'Sinan.Uçar - Interactive Resume' } = Astro.props;
+const {
+  title = 'Sinan Uçar – Senior Software Architect & AI Engineer',
+  description = 'Diplom-Informatiker mit 15+ Jahren Enterprise-Erfahrung. Ich baue sichere, skalierbare KI-Systeme – die Brücke zwischen klassischer IT und moderner AI-Integration.'
+} = Astro.props;
+
 const lang = Astro.currentLocale || 'de';
+const siteUrl = 'https://sinan.realizetogether.com';
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
+const ogImage = `${siteUrl}/og-image.png`;
+
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Sinan Uçar',
+  jobTitle: 'Senior Software Architect & AI Engineer',
+  url: siteUrl,
+  sameAs: [
+    'https://www.linkedin.com/in/infosinanucar/',
+    'https://github.com/ucarsinan'
+  ],
+  knowsAbout: ['AI Engineering', 'Software Architecture', 'LangChain', 'FastAPI', 'RAG', 'Enterprise Systems'],
+  alumniOf: { '@type': 'CollegeOrUniversity', name: 'Technische Universität Dortmund' }
+};
 ---
 
 <!doctype html>
@@ -18,11 +39,36 @@ const lang = Astro.currentLocale || 'de';
   <head>
     <meta charset="UTF-8" />
     <meta name="color-scheme" content="dark" />
-    <meta name="description" content="Sinan Uçar - Diplom-Informatiker & Solutions Architect" />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
+
     <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:site_name" content="Sinan Uçar" />
+    <meta property="og:locale" content={lang === 'de' ? 'de_DE' : 'en_US'} />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- hreflang -->
+    <link rel="alternate" hreflang="de" href={siteUrl + Astro.url.pathname.replace(/^\/en/, '')} />
+    <link rel="alternate" hreflang="en" href={siteUrl + '/en' + Astro.url.pathname.replace(/^\/en/, '')} />
+    <link rel="alternate" hreflang="x-default" href={siteUrl + Astro.url.pathname.replace(/^\/en/, '')} />
+
+    <!-- JSON-LD -->
+    <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
   </head>
   <body class="bg-slate-950 text-white min-h-screen flex flex-col">
     <Navbar />

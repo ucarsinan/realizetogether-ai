@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+Disallow: /datenschutz
+Disallow: /impressum
+Disallow: /en/privacy
+Disallow: /en/imprint
+
+Sitemap: https://sinan.realizetogether.com/sitemap-index.xml
