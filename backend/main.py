@@ -21,6 +21,7 @@ import sentry_sdk
 
 # ==========================================
 # 1. SETUP
+# Deployment: Render (not Vercel Services) — /api/ prefix is intentional
 # ==========================================
 load_dotenv()
 sentry_dsn = os.getenv("SENTRY_DSN")
@@ -531,6 +532,9 @@ class VisionAnalysis(BaseModel):
 # --- CHAT ---
 @app.post("/api/chat")
 async def chat_endpoint(request: ChatRequest):
+    if not CV_CONTEXT or CV_CONTEXT in ("Kein Lebenslauf gefunden.", "Error loading CV."):
+        msg = "CV nicht verfügbar. Bitte versuche es später." if request.language == "de" else "CV not available. Please try again later."
+        return {"reply": msg}
     print(f"📩 Chat: {request.message} | Lang: {request.language}")
     
     if request.language == "en":
