@@ -23,7 +23,7 @@ def test_calculator_division_by_zero():
     assert "Fehler" in result
 
 def test_search_projects():
-    res = search_projects.invoke("Astro")
+    res = search_projects.invoke("Supabase")
     assert "RealizeTogether" in res
 
     res_none = search_projects.invoke("NonExistent")
@@ -31,8 +31,8 @@ def test_search_projects():
 
 def test_search_projects_case_insensitive():
     """Suche soll unabhängig von Groß-/Kleinschreibung funktionieren."""
-    res_upper = search_projects.invoke("ASTRO")
-    res_lower = search_projects.invoke("astro")
+    res_upper = search_projects.invoke("SUPABASE")
+    res_lower = search_projects.invoke("supabase")
     assert res_upper == res_lower
 
 def test_search_projects_empty_query():

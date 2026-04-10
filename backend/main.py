@@ -394,7 +394,94 @@ async def fetch_webpage(url: str) -> str:
     except Exception as e:
         return f"Fehler beim Abrufen der Seite: {str(e)}"
 
-tools = [get_cv_summary, get_project_details, get_availability, web_search, fetch_webpage]
+import ast as _ast
+
+def _safe_eval_node(node: _ast.expr) -> float | int:
+    """Recursively evaluates a safe arithmetic AST node. Raises ValueError for disallowed constructs."""
+    if isinstance(node, _ast.Constant):
+        if isinstance(node.value, (int, float)):
+            return node.value
+        raise ValueError(f"Ungültiger Typ: {type(node.value).__name__}")
+    if isinstance(node, _ast.UnaryOp) and isinstance(node.op, _ast.USub):
+        return -_safe_eval_node(node.operand)
+    if isinstance(node, _ast.BinOp):
+        left = _safe_eval_node(node.left)
+        right = _safe_eval_node(node.right)
+        ops = {
+            _ast.Add: lambda a, b: a + b,
+            _ast.Sub: lambda a, b: a - b,
+            _ast.Mult: lambda a, b: a * b,
+            _ast.Div: lambda a, b: a / b,
+            _ast.Pow: lambda a, b: a ** b,
+            _ast.Mod: lambda a, b: a % b,
+        }
+        op_type = type(node.op)
+        if op_type not in ops:
+            raise ValueError(f"Ungültiger Operator: {op_type.__name__}")
+        return ops[op_type](left, right)
+    raise ValueError(f"Ungültiger Ausdruck: {type(node).__name__}")
+
+
+@tool
+def calculator(expression: str) -> str:
+    """Evaluates a safe arithmetic expression (e.g. '2 + 3 * 4'). Supports +, -, *, /, **, %.
+    Only numeric literals and arithmetic operators are allowed — no function calls or imports."""
+    try:
+        tree = _ast.parse(expression.strip(), mode="eval")
+        result = _safe_eval_node(tree.body)
+        if isinstance(result, float) and result.is_integer():
+            return str(int(result))
+        return str(result)
+    except ZeroDivisionError:
+        return "Fehler: Division durch Null"
+    except Exception as e:
+        return f"Fehler: {e}"
+
+
+_PORTFOLIO_PROJECTS = [
+    {
+        "name": "RealizeTogether",
+        "stack": ["Next.js 16", "Supabase", "FastAPI", "TypeScript", "LangChain"],
+        "description": "AI-powered collaboration platform for goal setting and accountability.",
+    },
+    {
+        "name": "Logopädie Report Agent",
+        "stack": ["Next.js 16", "FastAPI", "Groq", "Whisper", "LangChain", "Python"],
+        "description": "AI agent for automated therapy report generation for speech therapists.",
+    },
+    {
+        "name": "Portfolio Backend",
+        "stack": ["FastAPI", "Python", "LangChain", "Astro.js", "Sentry"],
+        "description": "Production FastAPI backend powering sinanucar.com with 4 AI endpoints.",
+    },
+]
+
+
+@tool
+def search_projects(query: str) -> str:
+    """Searches Sinan's portfolio projects by keyword. Returns matching project names and descriptions."""
+    q = query.lower()
+    matches = [
+        p for p in _PORTFOLIO_PROJECTS
+        if q in p["name"].lower()
+        or q in p["description"].lower()
+        or any(q in s.lower() for s in p["stack"])
+    ]
+    if not matches:
+        return "Keine passenden Projekte gefunden."
+    return "\n".join(
+        f"{p['name']}: {p['description']} (Stack: {', '.join(p['stack'])})"
+        for p in matches
+    )
+
+
+@tool
+def get_current_time() -> str:
+    """Returns the current date and time in YYYY-MM-DD HH:MM:SS format."""
+    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+
+tools = [get_cv_summary, get_project_details, get_availability, web_search, fetch_webpage, calculator, search_projects, get_current_time]
 
 # ==========================================
 # 4. DATA MODELS
@@ -402,6 +489,15 @@ tools = [get_cv_summary, get_project_details, get_availability, web_search, fetc
 class ChatRequest(BaseModel):
     message: str = Field(..., min_length=1, max_length=2000)
     language: Literal["de", "en"] = "de"
+
+class HistoryMessage(BaseModel):
+    role: Literal["user", "assistant"]
+    content: str = Field(..., max_length=5000)
+
+class AgentRequest(BaseModel):
+    message: str = Field(..., min_length=1, max_length=2000)
+    language: Literal["de", "en"] = "de"
+    history: list[HistoryMessage] = Field(default_factory=list, max_length=20)
 
 class AnalyzeRequest(BaseModel):
     text: str = Field(..., min_length=1, max_length=2000)
@@ -498,6 +594,8 @@ async def vision_endpoint(file: UploadFile = File(...), language: str = Form("de
         response = await invoke_resiliently([message], is_vision=True, structured_class=VisionAnalysis)
         return response
 
+    except HTTPException:
+        raise
     except Exception as e:
         print(f"❌ Vision Error: {e}")
         return {"error": str(e)}
@@ -528,25 +626,30 @@ async def analyze_sentiment(request: AnalyzeRequest):
 
 # --- AGENT ---
 @app.post("/api/agent")
-async def agent_endpoint(request: ChatRequest):
-    print(f"🤖 Agent Request (Async Loop): {request.message}")
+async def agent_endpoint(request: AgentRequest):
+    print(f"🤖 Agent Request (Async Loop): {request.message} | History: {len(request.history)} msgs")
     try:
         start_time = datetime.now()
-        
+
         system_content = (
             f"Du bist Sinans professioneller Portfolio-Assistent. "
             f"Antworte in der Sprache: {request.language}. "
-            "Nutze folgende Tools aktiv bei Recruiting-Fragen: "
-            "- get_cv_summary() → bei Fragen zu Skills, Erfahrung, Tech-Stack, Ausbildung "
-            "- get_project_details(project_name) → bei Fragen zu konkreten Projekten (Realize Together, Logopädie Report Agent, Portfolio Backend) "
-            "- get_availability() → bei Fragen zu Verfügbarkeit, Wechselbereitschaft, bevorzugten Rollen "
-            "- web_search(query) → für aktuelle externe Informationen "
+            "Kernfakten über Sinan Ucar (immer korrekt, niemals erfinden): "
+            "Name: Sinan Ucar | "
+            "Aktuelle Stelle: Senior Software Engineer @ Ceyoniq Technology GmbH (seit 10/2022) + eigenständige KI-Projekte | "
+            "Abschluss: Diplom-Informatik, TU Dortmund | "
+            "Erfahrung: 15+ Jahre Software Engineering, KI-Fokus seit 2024. "
+            "Nutze folgende Tools aktiv für detaillierte Fragen: "
+            "- get_cv_summary() → Skills, Tech-Stack, Ausbildung, Berufserfahrung, aktueller Arbeitgeber (Details) "
+            "- get_project_details(project_name) → Projekte: Realize Together, Logopädie Report Agent, Portfolio Backend "
+            "- get_availability() → Verfügbarkeit, bevorzugte Rollen, Wechselbereitschaft, Kontakt "
+            "- web_search(query) → aktuelle externe Informationen "
             "Antworte präzise und professionell. Zeige technische Tiefe."
         )
-        messages: list = [
-            {"role": "system", "content": system_content},
-            {"role": "user", "content": request.message}
-        ]
+        messages: list = [{"role": "system", "content": system_content}]
+        for h in request.history:
+            messages.append({"role": h.role, "content": h.content})
+        messages.append({"role": "user", "content": request.message})
         
         # Helper for Agent Tool Binding (since we have to bind tools to each model in the fallback)
         async def agent_invoke(msgs: list):
