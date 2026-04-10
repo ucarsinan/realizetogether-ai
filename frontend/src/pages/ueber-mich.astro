@@ -116,26 +116,7 @@ const softSkills = [
       </div>
     </div>
 
-    <!-- Zone 3: Werdegang -->
-    <div class="animate-fade-in-up">
-      <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-blue-400 via-cyan-400 to-emerald-400 text-transparent bg-clip-text pb-1">
-        Werdegang
-      </h2>
-      <div class="relative">
-        {stations.map((station, index) => (
-          <TimelineItem
-            year={station.year}
-            title={station.title}
-            company={station.company}
-            description={station.description}
-            tags={station.tags}
-            isLast={index === stations.length - 1}
-          />
-        ))}
-      </div>
-    </div>
-
-    <!-- Zone 4: Toolbox -->
+    <!-- Zone 3: Toolbox & Arbeitsweise -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in-up">
       <div class="bg-slate-900/50 border border-slate-800 p-6 rounded-3xl hover:border-blue-500/30 transition-colors">
         <h3 class="text-xl font-bold text-blue-400 mb-4">Toolbox</h3>
@@ -152,6 +133,25 @@ const softSkills = [
         <ul class="space-y-2 text-slate-400 text-sm">
           {softSkills.map((s) => <li class="flex items-center gap-2">✅ {s}</li>)}
         </ul>
+      </div>
+    </div>
+
+    <!-- Zone 4: Werdegang -->
+    <div class="animate-fade-in-up">
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-blue-400 via-cyan-400 to-emerald-400 text-transparent bg-clip-text pb-1">
+        Werdegang
+      </h2>
+      <div class="relative">
+        {stations.map((station, index) => (
+          <TimelineItem
+            year={station.year}
+            title={station.title}
+            company={station.company}
+            description={station.description}
+            tags={station.tags}
+            isLast={index === stations.length - 1}
+          />
+        ))}
       </div>
     </div>
 
