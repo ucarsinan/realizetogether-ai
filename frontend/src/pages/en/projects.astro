@@ -1,0 +1,34 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { projects } from '../../data/projects';
+---
+
+<Layout title="Projects | Sinan.Uçar">
+  <main class="min-h-screen pt-24 pb-20 px-4">
+    <div class="max-w-6xl mx-auto">
+
+      <!-- Header -->
+      <div class="text-center mb-16 animate-fade-in">
+        <div class="inline-block bg-blue-900/30 text-blue-300 px-3 py-1 rounded-full text-xs font-bold tracking-widest uppercase border border-blue-500/30 mb-6">
+          Case Studies
+        </div>
+        <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 via-cyan-400 to-emerald-400 text-transparent bg-clip-text pb-2 mb-6">
+          Projects
+        </h1>
+        <p class="text-slate-400 text-lg max-w-2xl mx-auto leading-relaxed">
+          Real problems. Real solutions. Each project demonstrates how enterprise engineering discipline
+          and AI integration work together in production.
+        </p>
+      </div>
+
+      <!-- Case Study Cards -->
+      <div class="space-y-8 animate-fade-in-up">
+        {projects.map((project) => (
+          <ProjectCard project={project} lang="en" />
+        ))}
+      </div>
+
+    </div>
+  </main>
+</Layout>

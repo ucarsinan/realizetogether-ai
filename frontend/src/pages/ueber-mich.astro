@@ -1,0 +1,159 @@
+---
+import Layout from '../layouts/Layout.astro';
+import TimelineItem from '../components/TimelineItem.astro';
+
+const stations = [
+  {
+    year: 'Seit 01/2025',
+    title: 'AI Solutions Architect (Independent R&D)',
+    company: 'Realize Together (R&D-Projekt)',
+    description:
+      'Eigenständige Konzeption von Production-grade Enterprise-Architekturen zur Evaluierung modernster KI-Integrationen. Fokus auf die sichere, deterministische Integration von LLMs in klassische Backend-Systeme.',
+    tags: ['Python', 'FastAPI', 'LangChain', 'Pydantic', 'RAG', 'AI-Architektur']
+  },
+  {
+    year: 'Seit 10/2022',
+    title: 'Senior Software Engineer (Remote)',
+    company: 'Ceyoniq GmbH, Bielefeld',
+    description:
+      'Architekturverantwortung für skalierbare Enterprise-Plattformen. Architektur asynchroner REST-Schnittstellen (Node.js/Express) mit Fokus auf Datenflusskoptimierung ("Data Readiness") für datengetriebene und zukünftig KI-gestützte Workflows. Etablierung robuster Engineering-Standards (CI/CD, Playwright, Security Hardening).',
+    tags: ['TypeScript', 'Node.js', 'System Design', 'CI/CD', 'Playwright']
+  },
+  {
+    year: '12/2020 – 09/2022',
+    title: 'Senior Software Engineer / Technical Consultant',
+    company: 'Fil & Muz, Duisburg',
+    description:
+      'Planung und Realisierung von responsiven Landingpages, Microsites und interaktiven Rich Ads für KMU- und Agenturkunden. Optimierung von Performance und Cross-Browser-Kompatibilität. Strategische Beratung zu UX und Web-Architekturen.',
+    tags: ['Responsive Design', 'Rich Ads', 'UX-Beratung', 'Performance', 'Microsites']
+  },
+  {
+    year: '05/2019 – 11/2020',
+    title: 'Software Engineer (Frontend & Prozessautomatisierung)',
+    company: 'Smoox GmbH, Düsseldorf',
+    description:
+      'Entwicklung dynamischer Werbeformate und Microsites. Einführung wiederverwendbarer Banner-Module und Automatisierung von Build- und Deployment-Prozessen.',
+    tags: ['Dynamic Ads', 'Build-Automatisierung', 'Microsites', 'Frontend']
+  },
+  {
+    year: '10/2014 – 12/2018',
+    title: 'Senior IT-Consultant & Enterprise Architect',
+    company: 'ÇIĞIŞ Software Systems Ltd., Istanbul',
+    description:
+      'Steuerung von Enterprise-Web-Projekten inkl. Anforderungsanalyse, Architekturdesign und Implementierungskoordination. Einführung agiler Methoden und Begleitung komplexer Rollouts in multinationalen Teams.',
+    tags: ['Projektmanagement', 'Agile', 'Architekturdesign', 'Anforderungsanalyse']
+  },
+  {
+    year: '06/2009 – 08/2014',
+    title: 'Backend Software Engineer (C# / .NET)',
+    company: 'Invitec GmbH, Duisburg',
+    description:
+      'Portierung und Weiterentwicklung eines Kernprodukts in C#/.NET (Instacount®) inkl. Performance-Tuning und Reporting mit SQL und Crystal Reports.',
+    tags: ['C#', '.NET', 'SQL', 'Crystal Reports', 'Performance-Tuning']
+  },
+  {
+    year: '2000 – 2008',
+    title: 'Diplom-Informatik',
+    company: 'Technische Universität Dortmund',
+    description:
+      'Diplomarbeit: Konnektionistische Systeme in der natürlichen und künstlichen Intelligenz sowie in den kognitiven Neurowissenschaften – Strukturen, Lernen und Fähigkeiten.',
+    tags: ['Künstliche Intelligenz', 'Diplom', 'Neuronale Netze', 'Kognitive Neurowissenschaft']
+  }
+];
+
+const skills = [
+  'TypeScript / Node.js', 'React / Next.js', 'Vue.js / Astro', 'Python / FastAPI',
+  'Tailwind CSS', 'LangChain / RAG', 'Computer Vision', 'C# / .NET Core',
+  'PostgreSQL / MongoDB', 'Docker / CI/CD', 'Git / GitHub', 'Testing (Playwright)'
+];
+
+const softSkills = [
+  'System Design & Architektur', 'Data Governance & Compliance',
+  'Performance & Latenz-Tuning', 'Analytisches Denken', 'Lösungsorientiert'
+];
+---
+
+<Layout title="Über mich | Sinan.Uçar">
+  <div class="max-w-6xl mx-auto px-4 py-12 md:py-16 space-y-20">
+
+    <!-- Zone 1: Person -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in">
+      <div class="bg-slate-900/50 border border-slate-800 p-6 rounded-3xl flex flex-col items-center text-center justify-center hover:border-emerald-500/30 transition-colors">
+        <div class="w-32 h-32 md:w-40 md:h-40 rounded-2xl border-4 border-slate-800/50 overflow-hidden mb-4 shadow-2xl transition-transform hover:scale-105 duration-300">
+          <img src="/image1.jpeg" alt="Sinan Uçar" class="w-full h-full object-cover" />
+        </div>
+        <h1 class="text-xl font-bold text-white">Sinan Uçar</h1>
+        <p class="text-emerald-400 text-sm font-mono mt-1">Dipl.-Inf.</p>
+        <p class="text-slate-500 text-sm mt-4">Open for Remote</p>
+        <div class="flex flex-col gap-2 mt-4 w-full">
+          {[
+            { flag: '🇩🇪', lang: 'Deutsch' },
+            { flag: '🇺🇸', lang: 'Englisch' },
+            { flag: '🇹🇷', lang: 'Türkisch' },
+          ].map(({ flag, lang }) => (
+            <div class="flex items-center gap-3 bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+              <span class="text-xl">{flag}</span>
+              <span class="text-white font-bold text-sm">{lang}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Zone 2: Transition Story -->
+      <div class="md:col-span-2 bg-slate-900/50 border border-slate-800 p-8 rounded-3xl flex flex-col justify-center hover:border-slate-700 transition-colors">
+        <h2 class="text-2xl font-bold text-white mb-6">Code, Logik & KI — die logische Entwicklung</h2>
+        <div class="space-y-4 text-slate-400 text-base leading-relaxed">
+          <p>
+            Meine Diplomarbeit an der TU Dortmund 2008 behandelte konnektionistische Systeme — neuronale Netze, maschinelles Lernen, kognitive Neurowissenschaft. Damals noch Theorie.
+          </p>
+          <p>
+            Was folgte, waren <strong class="text-blue-400">15 Jahre Praxis</strong>: Enterprise-Architekturen, skalierbare Backends, komplexe Systemlandschaften — und die Erkenntnis, dass solides Engineering und KI kein Widerspruch sind, sondern eine natürliche Einheit.
+          </p>
+          <p>
+            <strong class="text-emerald-400">Mein Ansatz:</strong> Ich integriere LLMs nicht als Blackbox, sondern als präzises, deterministisches Werkzeug — mit denselben Qualitätsansprüchen, die ich seit 2009 an jede Codebasis stelle.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Zone 3: Werdegang -->
+    <div class="animate-fade-in-up">
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-blue-400 via-cyan-400 to-emerald-400 text-transparent bg-clip-text pb-1">
+        Werdegang
+      </h2>
+      <div class="relative">
+        {stations.map((station, index) => (
+          <TimelineItem
+            year={station.year}
+            title={station.title}
+            company={station.company}
+            description={station.description}
+            tags={station.tags}
+            isLast={index === stations.length - 1}
+          />
+        ))}
+      </div>
+    </div>
+
+    <!-- Zone 4: Toolbox -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in-up">
+      <div class="bg-slate-900/50 border border-slate-800 p-6 rounded-3xl hover:border-blue-500/30 transition-colors">
+        <h3 class="text-xl font-bold text-blue-400 mb-4">Toolbox</h3>
+        <div class="flex flex-wrap gap-2">
+          {skills.map((skill) => (
+            <span class="text-xs bg-slate-950 border border-slate-800 px-2 py-1 rounded text-slate-300">
+              {skill}
+            </span>
+          ))}
+        </div>
+      </div>
+      <div class="bg-gradient-to-br from-blue-900/20 to-slate-900 border border-slate-800 p-6 rounded-3xl hover:border-emerald-500/30 transition-colors">
+        <h3 class="text-xl font-bold text-emerald-400 mb-4">Arbeitsweise</h3>
+        <ul class="space-y-2 text-slate-400 text-sm">
+          {softSkills.map((s) => <li class="flex items-center gap-2">✅ {s}</li>)}
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</Layout>

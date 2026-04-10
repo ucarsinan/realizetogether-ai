@@ -6,6 +6,12 @@ import tailwindcss from '@tailwindcss/vite';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://sinanucar.com',
+  redirects: {
+    '/profil': '/ueber-mich',
+    '/lebenslauf': '/ueber-mich',
+    '/en/profile': '/en/about',
+    '/en/resume': '/en/about',
+  },
   integrations: [
     sitemap({
       filter: (page) =>
