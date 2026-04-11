@@ -62,55 +62,78 @@ const stations = [
 ];
 
 const skills = [
-  'TypeScript / Node.js', 'React / Next.js', 'Vue.js / Astro', 'Python / FastAPI',
-  'Tailwind CSS', 'LangChain / RAG', 'Computer Vision', 'C# / .NET Core',
-  'PostgreSQL / MongoDB', 'Docker / CI/CD', 'Git / GitHub', 'Testing (Playwright)'
+  'TypeScript / Node.js',
+  'React / Next.js',
+  'Vue.js / Astro',
+  'Python / FastAPI',
+  'Tailwind CSS',
+  'LangChain / RAG',
+  'Computer Vision',
+  'C# / .NET Core',
+  'PostgreSQL / MongoDB',
+  'Docker / CI/CD',
+  'Git / GitHub',
+  'Testing (Playwright)'
 ];
 
 const softSkills = [
-  'System Design & Architecture', 'Data Governance & Compliance',
-  'Performance & Latency Tuning', 'Analytical Thinking', 'Solution-Oriented'
+  'System Design & Architecture',
+  'Data Governance & Compliance',
+  'Performance & Latency Tuning',
+  'Analytical Thinking',
+  'Solution-Oriented'
 ];
 ---
 
 <Layout title="About | Sinan.Uçar">
   <div class="max-w-6xl mx-auto px-4 py-12 md:py-16 space-y-20">
-
     <!-- Zone 1: Person -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in">
-      <div class="bg-slate-900/50 border border-slate-800 p-6 rounded-3xl flex flex-col items-center text-center justify-center hover:border-emerald-500/30 transition-colors">
-        <div class="w-32 h-32 md:w-40 md:h-40 rounded-2xl border-4 border-slate-800/50 overflow-hidden mb-4 shadow-2xl transition-transform hover:scale-105 duration-300">
+      <div
+        class="bg-slate-900/50 border border-slate-800 p-6 rounded-3xl flex flex-col items-center text-center justify-center hover:border-emerald-500/30 transition-colors"
+      >
+        <div
+          class="w-32 h-32 md:w-40 md:h-40 rounded-2xl border-4 border-slate-800/50 overflow-hidden mb-4 shadow-2xl transition-transform hover:scale-105 duration-300"
+        >
           <img src="/image1.jpeg" alt="Sinan Uçar" class="w-full h-full object-cover" />
         </div>
         <h1 class="text-xl font-bold text-white">Sinan Uçar</h1>
-        <p class="text-emerald-400 text-sm font-mono mt-1">Dipl.-Inf.</p>
-        <p class="text-slate-500 text-sm mt-4">Open for Remote</p>
+        <p class="text-emerald-400 text-sm font-mono mt-1">Diplom-Informatiker</p>
         <div class="flex flex-col gap-2 mt-4 w-full">
-          {[
-            { flag: '🇩🇪', lang: 'German' },
-            { flag: '🇺🇸', lang: 'English' },
-            { flag: '🇹🇷', lang: 'Turkish' },
-          ].map(({ flag, lang }) => (
-            <div class="flex items-center gap-3 bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
-              <span class="text-xl">{flag}</span>
-              <span class="text-white font-bold text-sm">{lang}</span>
-            </div>
-          ))}
+          {
+            [
+              { flag: '🇩🇪', lang: 'German' },
+              { flag: '🇺🇸', lang: 'English' },
+              { flag: '🇹🇷', lang: 'Turkish' }
+            ].map(({ flag, lang }) => (
+              <div class="flex items-center gap-3 bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <span class="text-xl">{flag}</span>
+                <span class="text-white font-bold text-sm">{lang}</span>
+              </div>
+            ))
+          }
         </div>
       </div>
 
       <!-- Zone 2: Transition Story -->
-      <div class="md:col-span-2 bg-slate-900/50 border border-slate-800 p-8 rounded-3xl flex flex-col justify-center hover:border-slate-700 transition-colors">
+      <div
+        class="md:col-span-2 bg-slate-900/50 border border-slate-800 p-8 rounded-3xl flex flex-col justify-center hover:border-slate-700 transition-colors"
+      >
         <h2 class="text-2xl font-bold text-white mb-6">Code, Logic & AI — A Natural Evolution</h2>
         <div class="space-y-4 text-slate-400 text-base leading-relaxed">
           <p>
-            My diploma thesis at TU Dortmund in 2008 covered connectionist systems — neural networks, machine learning, cognitive neuroscience. Theory back then.
+            My diploma thesis at TU Dortmund in 2008 covered connectionist systems — neural
+            networks, machine learning, cognitive neuroscience. Theory back then.
           </p>
           <p>
-            What followed were <strong class="text-blue-400">15 years of practice</strong>: enterprise architectures, scalable backends, complex system landscapes — and the insight that solid engineering and AI are not opposites, but a natural combination.
+            What followed were <strong class="text-blue-400">15 years of practice</strong>:
+            enterprise architectures, scalable backends, complex system landscapes — and the insight
+            that solid engineering and AI are not opposites, but a natural combination.
           </p>
           <p>
-            <strong class="text-emerald-400">My approach:</strong> I don't integrate LLMs as black boxes, but as precise, deterministic tools — held to the same quality standards I've applied to every codebase since 2009.
+            <strong class="text-emerald-400">My approach:</strong> I don't integrate LLMs as black boxes,
+            but as precise, deterministic tools — held to the same quality standards I've applied to every
+            codebase since 2009.
           </p>
         </div>
       </div>
@@ -118,42 +141,51 @@ const softSkills = [
 
     <!-- Zone 3: Career Timeline -->
     <div class="animate-fade-in-up">
-      <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-blue-400 via-cyan-400 to-emerald-400 text-transparent bg-clip-text pb-1">
+      <h2
+        class="text-3xl md:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-blue-400 via-cyan-400 to-emerald-400 text-transparent bg-clip-text pb-1"
+      >
         Career Timeline
       </h2>
       <div class="relative">
-        {stations.map((station, index) => (
-          <TimelineItem
-            year={station.year}
-            title={station.title}
-            company={station.company}
-            description={station.description}
-            tags={station.tags}
-            isLast={index === stations.length - 1}
-          />
-        ))}
+        {
+          stations.map((station, index) => (
+            <TimelineItem
+              year={station.year}
+              title={station.title}
+              company={station.company}
+              description={station.description}
+              tags={station.tags}
+              isLast={index === stations.length - 1}
+            />
+          ))
+        }
       </div>
     </div>
 
     <!-- Zone 4: Toolbox -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in-up">
-      <div class="bg-slate-900/50 border border-slate-800 p-6 rounded-3xl hover:border-blue-500/30 transition-colors">
+      <div
+        class="bg-slate-900/50 border border-slate-800 p-6 rounded-3xl hover:border-blue-500/30 transition-colors"
+      >
         <h3 class="text-xl font-bold text-blue-400 mb-4">Toolbox</h3>
         <div class="flex flex-wrap gap-2">
-          {skills.map((skill) => (
-            <span class="text-xs bg-slate-950 border border-slate-800 px-2 py-1 rounded text-slate-300">
-              {skill}
-            </span>
-          ))}
+          {
+            skills.map((skill) => (
+              <span class="text-xs bg-slate-950 border border-slate-800 px-2 py-1 rounded text-slate-300">
+                {skill}
+              </span>
+            ))
+          }
         </div>
       </div>
-      <div class="bg-gradient-to-br from-blue-900/20 to-slate-900 border border-slate-800 p-6 rounded-3xl hover:border-emerald-500/30 transition-colors">
+      <div
+        class="bg-gradient-to-br from-blue-900/20 to-slate-900 border border-slate-800 p-6 rounded-3xl hover:border-emerald-500/30 transition-colors"
+      >
         <h3 class="text-xl font-bold text-emerald-400 mb-4">Work Style</h3>
         <ul class="space-y-2 text-slate-400 text-sm">
           {softSkills.map((s) => <li class="flex items-center gap-2">✅ {s}</li>)}
         </ul>
       </div>
     </div>
-
   </div>
 </Layout>

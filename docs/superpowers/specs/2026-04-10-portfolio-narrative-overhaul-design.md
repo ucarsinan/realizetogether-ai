@@ -9,25 +9,29 @@
 ## Kontext
 
 sinanucar.com ist ein Portfolio für einen Diplom-Informatiker mit 15+ Jahren Enterprise-Erfahrung, der sich als AI Engineer / Architect positioniert. Die Zielgruppe sind:
+
 - **HR / Recruiter** — müssen neugierig werden (Headlines, Story)
 - **CTO / Engineering Lead** — müssen überzeugt werden (Demos, Case Studies, Tiefe)
 
-Der typische Besucher kommt über LinkedIn oder eine Bewerbung und hat 30 Sekunden um zu entscheiden: *"Kann der Mann das, was er behauptet?"*
+Der typische Besucher kommt über LinkedIn oder eine Bewerbung und hat 30 Sekunden um zu entscheiden: _"Kann der Mann das, was er behauptet?"_
 
-**Kernproblem heute:** Die Website zeigt *was* Sinan kann (Demos), erzählt aber nicht *wer* er ist und wie er dahin gekommen ist. Die Verbindung zwischen 15 Jahren Engineering-Disziplin und KI-Kompetenz wird nicht sichtbar.
+**Kernproblem heute:** Die Website zeigt _was_ Sinan kann (Demos), erzählt aber nicht _wer_ er ist und wie er dahin gekommen ist. Die Verbindung zwischen 15 Jahren Engineering-Disziplin und KI-Kompetenz wird nicht sichtbar.
 
 ---
 
 ## 1. Informationsarchitektur (Navigation)
 
 ### Vorher
+
 `Home` · `Profil` · `Lebenslauf` · `AI Showcase` · `Blog` · `Kontakt`
 
 ### Nachher
+
 `Home` · `Projekte` · `AI Showcase` · `Über mich` · `Blog` · `Kontakt`
 EN: `Home` · `Projects` · `AI Showcase` · `About` · `Blog` · `Contact`
 
 **Änderungen:**
+
 - `Projekte` als neue prominente Seite hinzufügen
 - `Profil` + `Lebenslauf` → eine Seite `Über mich` / `About`
 - Reihenfolge: Projekte kommt vor AI Showcase — weil es die Frage beantwortet bevor der Besucher die Demos sieht
@@ -39,10 +43,12 @@ EN: `Home` · `Projects` · `AI Showcase` · `About` · `Blog` · `Contact`
 **Subtitle bleibt:** `Senior Software Architect & AI Engineer`
 
 **Beschreibungstext (DE):**
+
 > Meine Diplomarbeit behandelte Neuronale Netze — 2008.
 > 15 Jahre Enterprise Engineering. Ich integriere LLMs nicht als Blackbox — sondern als präzises, deterministisches Werkzeug in komplexe Systemlandschaften.
 
 **Beschreibungstext (EN):**
+
 > My diploma thesis covered Neural Networks — 2008.
 > 15 years of enterprise engineering. I don't integrate LLMs as black boxes — but as precise, deterministic tools into complex system landscapes.
 
@@ -60,6 +66,7 @@ EN: `Home` · `Projects` · `AI Showcase` · `About` · `Blog` · `Contact`
 
 **Sektion 1 — Case Study Cards (groß)**
 Jede Card enthält:
+
 - Projektnummer + Titel + Status-Badge (Live / In Entwicklung)
 - Stack-Tags
 - 4 Zonen: Problem · Lösung · Stack · Ergebnis
@@ -68,6 +75,7 @@ Jede Card enthält:
 **Projekte:**
 
 #### Projekt 01 — Logopädie Report Agent
+
 - **Problem:** Logopäden verbringen Stunden mit Berichtsschreiben statt mit Patienten
 - **Lösung:** Audio-Aufnahme → Whisper-Transkription → strukturierter KI-Bericht in Sekunden
 - **Stack:** Next.js · FastAPI · Groq (Whisper + LLaMA) · Pydantic
@@ -75,6 +83,7 @@ Jede Card enthält:
 - **Status:** Live (Portfolio-Projekt)
 
 #### Projekt 02 — RealizeTogether
+
 - **Problem:** Kollaborative Workflows fehlen klare KI-Integration die enterprise-tauglich ist
 - **Lösung:** Plattform mit KI-gestützten Features auf sicherer, deterministischer Basis
 - **Stack:** Next.js 16 · Supabase · FastAPI · LangChain
@@ -82,6 +91,7 @@ Jede Card enthält:
 - **Status:** Aktiv in Entwicklung
 
 #### Projekt 03 — Dieses Portfolio
+
 - **Problem:** Wie baut man ein Portfolio-Backend das Multi-Provider-Resilienz demonstriert?
 - **Lösung:** FastAPI mit LangChain Multi-Fallback über 4 Anbieter (Google, OpenAI, Groq, Anthropic)
 - **Stack:** FastAPI · LangChain · Pydantic · Astro · Render
@@ -97,15 +107,15 @@ Initial leer oder mit Platzhalter "Weitere Projekte in Kürze".
 ## 4. Überarbeitete Seite: Über mich / About
 
 **Route:** `/ueber-mich` (DE) · `/en/about` (EN)
-*(Ersetzt `/profil`, `/lebenslauf`, `/en/profile`, `/en/resume`)*
+_(Ersetzt `/profil`, `/lebenslauf`, `/en/profile`, `/en/resume`)_
 
 ### Aufbau (von oben nach unten)
 
 **Zone 1 — Person**
-Foto · Name · `Dipl.-Inf.` · `Open for Remote` · Sprachen (DE, EN, TR)
+Foto · Name · `Diplom-Informatiker` · `Open for Remote` · Sprachen (DE, EN, TR)
 
 **Zone 2 — Transition-Story**
-Überschrift: *"Code, Logik & KI — die logische Entwicklung"* (oder ähnlich)
+Überschrift: _"Code, Logik & KI — die logische Entwicklung"_ (oder ähnlich)
 
 > Meine Diplomarbeit 2008 an der TU Dortmund behandelte konnektionistische Systeme — neuronale Netze, maschinelles Lernen, kognitive Neurowissenschaft. Damals noch Theorie.
 >
@@ -113,7 +123,7 @@ Foto · Name · `Dipl.-Inf.` · `Open for Remote` · Sprachen (DE, EN, TR)
 >
 > **Mein Ansatz:** Ich integriere LLMs nicht als Blackbox, sondern als deterministisches Werkzeug — mit denselben Qualitätsansprüchen die ich seit 2009 an jede Codebasis stelle.
 
-*Hinweis: Finaler Text wird von Sinan abgenommen — das ist ein Entwurf.*
+_Hinweis: Finaler Text wird von Sinan abgenommen — das ist ein Entwurf._
 
 **Zone 3 — Werdegang (Timeline)**
 Übernommen aus aktueller `resume.astro` — unverändert, chronologisch.
@@ -122,7 +132,9 @@ Foto · Name · `Dipl.-Inf.` · `Open for Remote` · Sprachen (DE, EN, TR)
 Übernommen aus aktueller `profile.astro` — Skills-Tags + Soft Skills Grid.
 
 ### Redirects
+
 Alte Routen leiten auf neue weiter:
+
 - `/profil` → `/ueber-mich`
 - `/lebenslauf` → `/ueber-mich`
 - `/en/profile` → `/en/about`
@@ -136,11 +148,11 @@ Alte Routen leiten auf neue weiter:
 
 **Änderung:** Jede der drei Demo-Sektionen bekommt einen kurzen Kontext-Absatz über der Demo:
 
-| Demo | Kontext-Text (Kurzversion) |
-|---|---|
-| Sentiment Analysis | *"Gebaut um strukturierte Outputs mit Pydantic zu demonstrieren — LLMs liefern keine JSON-Strings, sondern typisierte Objekte."* |
-| Vision Intelligence | *"Multimodale Analyse via LangChain — zeigt wie Bild-Inputs sicher validiert und an das Modell übergeben werden."* |
-| Agentic Workflows | *"Manueller Tool-Loop ohne Framework-Magie — bewusst, weil ich verstehen will was passiert bevor ich es abstrahiere."* |
+| Demo                | Kontext-Text (Kurzversion)                                                                                                       |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Sentiment Analysis  | _"Gebaut um strukturierte Outputs mit Pydantic zu demonstrieren — LLMs liefern keine JSON-Strings, sondern typisierte Objekte."_ |
+| Vision Intelligence | _"Multimodale Analyse via LangChain — zeigt wie Bild-Inputs sicher validiert und an das Modell übergeben werden."_               |
+| Agentic Workflows   | _"Manueller Tool-Loop ohne Framework-Magie — bewusst, weil ich verstehen will was passiert bevor ich es abstrahiere."_           |
 
 ---
 
@@ -149,6 +161,7 @@ Alte Routen leiten auf neue weiter:
 **Stack bleibt unverändert:** Astro · Tailwind CSS · FastAPI Backend
 
 **Neue Dateien:**
+
 - `frontend/src/pages/projekte.astro` (DE)
 - `frontend/src/pages/en/projects.astro` (EN)
 - `frontend/src/pages/ueber-mich.astro` (DE) — ersetzt profil.astro + lebenslauf.astro
@@ -157,18 +170,20 @@ Alte Routen leiten auf neue weiter:
 - `frontend/src/data/projects.ts` — Projektdaten als typisiertes Array
 
 **Geänderte Dateien:**
+
 - `frontend/src/components/Navbar.astro` — neue Nav-Struktur
 - `frontend/src/pages/index.astro` + `frontend/src/pages/en/index.astro` — Hero-Text
 - `frontend/src/pages/ai.astro` + `frontend/src/pages/en/ai.astro` — Kontext-Texte
 - `frontend/src/pages/index.astro` (Redirects für alte Routen)
 
 **Gelöschte Dateien:**
+
 - `frontend/src/pages/profil.astro`
 - `frontend/src/pages/lebenslauf.astro`
 - `frontend/src/pages/en/profile.astro`
 - `frontend/src/pages/en/resume.astro`
 
-*(Redirects sicherstellen bevor diese gelöscht werden)*
+_(Redirects sicherstellen bevor diese gelöscht werden)_
 
 ---
 
@@ -184,7 +199,7 @@ Alte Routen leiten auf neue weiter:
 
 ## Erfolgskriterien
 
-1. Ein Besucher versteht in 30 Sekunden: *wer Sinan ist, was er gebaut hat, und warum KI für ihn kein Hype ist*
+1. Ein Besucher versteht in 30 Sekunden: _wer Sinan ist, was er gebaut hat, und warum KI für ihn kein Hype ist_
 2. CTO findet Case Studies mit Problem/Lösung/Stack — nicht nur Demo-Links
 3. HR findet die Transition-Story und kann sie weitererzählen
 4. Keine 404s durch fehlende Redirects alter Routen

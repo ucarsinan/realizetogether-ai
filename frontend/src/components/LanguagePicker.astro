@@ -14,17 +14,18 @@ const slug = segments.join('/');
 // Mapping Updates
 const routeTranslations: Record<string, string> = {
     // DE -> EN
-    'profil': 'profile', // <--- NEU
+    'ueber-mich': 'about',
+    'profil': 'profile',
     'lebenslauf': 'resume',
     'projekte': 'projects',
     'blog': 'blog',
     'kontakt': 'contact',
     'impressum': 'imprint',
     'datenschutz': 'privacy',
-    
+
     // EN -> DE
-    'profile': 'profil', // <--- NEU
-    'about': 'profil',   // Fallback
+    'about': 'ueber-mich',
+    'profile': 'profil',
     'resume': 'lebenslauf',
     'projects': 'projekte',
     'contact': 'kontakt',
